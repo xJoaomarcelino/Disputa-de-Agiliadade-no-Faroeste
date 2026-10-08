@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Duelo de Faroeste - Teste de Reflexos</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@400;700&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+    body {
+      background: #0d0a06; overflow: hidden;
+      font-family: 'Roboto Mono', monospace; cursor: none;
+      height: 100vh; width: 100vw;
+    }
+    #game-container {
+      position: relative; width: 100vw; height: 100vh; overflow: hidden;
+      background: linear-gradient(to bottom,
+        #1a2a4a 0%, #3a5a7a 25%, #e8a84a 45%, #d4943a 48%,
+        #c4a06a 55%, #b89050 70%, #a87840 100%);
+    }
+    .cloud {
+      position: absolute; background: rgba(255,255,255,0.15);
+      border-radius: 50px; filter: blur(2px); animation: drift linear infinite;
+    }
+    .cloud::before, .cloud::after {
+      content: ''; position: absolute; background: rgba(255,255,255,0.15); border-radius: 50%;
+    }
+    .cloud1 { width: 120px; height: 40px; top: 8%; left: -150px; animation-duration: 45s; }
+    .cloud1::before { width: 50px; height: 50px; top: -25px; left: 20px; }
+    .cloud1::after { width: 40px; height: 40px; top: -15px; left: 55px; }
+    .cloud2 { width: 180px; height: 50px; top: 15%; left: -200px; animation-duration: 60s; animation-delay: -20s; }
+    .cloud2::before { width: 70px; height: 70px; top: -35px; left: 30px; }
+    .cloud2::after { width: 55px; height: 55px; top: -20px; left: 80px; }
+    .cloud3 { width: 100px; height: 35px; top: 5%; left: -120px; animation-duration: 35s; animation-delay: -10s; }
+    .cloud3::before { width: 45px; height: 45px; top: -22px; left: 15px; }
+    @keyframes drift {
+      from { transform: translateX(0); }
+      to { transform: translateX(calc(100vw + 300px)); }
+    }
+    .sun {
+      position: absolute; top: 6%; right: 12%; width: 90px; height: 90px;
+      background: radial-gradient(circle, #FFF8DC 0%, #FFD700 40%, #FFA500 70%, transparent 100%);
+      border-radius: 50%;
+      box-shadow: 0 0 60px #FFD700, 0 0 120px rgba(255,165,0,0.6);
+      animation: sun-pulse 4s ease-in-out infinite;
+    }
+    @keyframes sun-pulse {
+      0%, 100% { box-shadow: 0 0 60px #FFD700, 0 0 120px rgba(255,165,0,0.6); }
+      50% { box-shadow: 0 0 80px #FFD700, 0 0 150px rgba(255,165,0,0.7); }
+    }
+    .mountains-far {
+      position: absolute; bottom: 42%; width: 100%; height: 30%;
+      background:
+        linear-gradient(160deg, transparent 45%, #5a4a3a 45%, #5a4a3a 70%, transparent 70%),
+        linear-gradient(20deg, transparent 40%, #4a3a2a 40%, #4a3a2a 65%, transparent 65%),
+        linear-gradient(150deg, transparent 50%, #6a5a4a 50%, #6a5a4a 75%, transparent 75%);
+      background-size: 50% 100%, 45% 100%, 40% 100%;
+      background-position: 5% 0, 40% 0, 75% 0; opacity: 0.5;
+    }
+    .mountains-near {
+      position: absolute; bottom: 40%; width: 100%; height: 22%;
+      background:
+        linear-gradient(155deg, transparent 42%, #8B7355 42%, #8B7355 68%, transparent 68%),
+        linear-gradient(25deg, transparent 35%, #A0896B 35%, #A0896B 60%, transparent 60%),
+        linear-gradient(145deg, transparent 48%, #6B5344 48%, #6B5344 72%, transparent 72%);
+      background-size: 38% 100%, 42% 100%, 35% 100%;
+      background-position: 15% 0, 55% 0, 85% 0; opacity: 0.75;
+    }
+    .ground {
+      position: absolute; bottom: 0; width: 100%; height: 42%;
+      background: linear-gradient(to bottom, #d4a574 0%, #c49464 15%, #b88454 40%, #a87444 70%, #986834 100%);
+    }
+    .ground::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(139,90,43,0.08) 80px, rgba(139,90,43,0.08) 82px),
+        repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(139,90,43,0.05) 40px, rgba(139,90,43,0.05) 42px);
+    }
+    .cactus { position: absolute; bottom: 40%; z-index: 5; }
+    .cactus-body {
+      width: 28px; height: 90px;
+      background: linear-gradient(90deg, #1e6b3a, #2E8B57, #3a9b67);
+      border-radius: 14px; position: relative;
+      box-shadow: inset -4px 0 8px rgba(0,0,0,0.3);
+    }
+    .cactus-arm {
+      position: absolute; background: linear-gradient(180deg, #2E8B57, #1e6b3a); border-radius: 10px;
+    }
+    .cactus1 { left: 8%; }
+    .cactus1 .cactus-body { height: 100px; }
+    .cactus1 .arm-l { width: 35px; height: 16px; top: 28px; left: -28px; transform: rotate(-15deg); }
+    .cactus1 .arm-l::after { content:''; position:absolute; width:14px; height:30px; background:inherit; border-radius:8px; top:-25px; left:0; }
+    .cactus1 .arm-r { width: 30px; height: 14px; top: 50px; right: -25px; transform: rotate(20deg); }
+    .cactus1 .arm-r::after { content:''; position:absolute; width:13px; height:25px; background:inherit; border-radius:7px; top:-20px; right:0; }
+    .cactus2 { left: 78%; }
+    .cactus2 .cactus-body { height: 70px; width: 22px; }
+    .cactus2 .arm-l { width: 25px; height: 12px; top: 20px; left: -20px; transform: rotate(-25deg); }
+    .cactus2 .arm-l::after { content:''; position:absolute; width:11px; height:22px; background:inherit; border-radius:6px; top:-18px; left:0; }
+    .cactus3 { left: 55%; bottom: 41%; }
+    .cactus3 .cactus-body { height: 55px; width: 18px; }
+    .cactus3 .arm-r { width: 20px; height: 10px; top: 18px; right: -16px; transform: rotate(15deg); }
+    .cactus3 .arm-r::after { content:''; position:absolute; width:10px; height:18px; background:inherit; border-radius:5px; top:-14px; right:0; }
+
+    /* ===== PERSONAGENS ===== */
+    #player, #enemy {
+      position: absolute; bottom: 28%;
+      width: 110px; height: 200px; z-index: 15;
+      transition: transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1), filter 0.2s;
+      transform-origin: bottom center;
+    }
+    #player { left: 8%; }
+    #enemy { right: 8%; }
+
+    #player.ready { filter: drop-shadow(0 0 8px rgba(255,215,0,0.4)); }
+    #player.shooting { transform: translateX(6px); filter: drop-shadow(0 0 15px rgba(255,100,0,0.6)); }
+    #player.hurt { filter: brightness(1.5) sepia(0.5) hue-rotate(-25deg); animation: shake 0.35s; }
+    #player.dead {
+      transform: rotate(-90deg) translateY(50px);
+      opacity: 0.4; filter: grayscale(0.9);
+      transition: transform 0.55s, opacity 0.55s;
+    }
+    /* Agachar realista: desce o corpo, dobra visualmente (não só encolhe) */
+    #player.kneeling {
+      transform: translateY(58px);
+    }
+    #player.kneeling .char-upper {
+      transform: translateY(8px) scaleY(0.92);
+      transform-origin: bottom center;
+    }
+    #player.kneeling.shooting { transform: translateY(58px) translateX(5px); }
+    #player.kneeling.dead { transform: rotate(-80deg) translateY(40px); }
+
+    #enemy.hit-flash { filter: brightness(2.3) sepia(1) hue-rotate(-30deg) saturate(2); }
+    #enemy.shooting { transform: translateX(-6px); filter: drop-shadow(0 0 12px rgba(255,50,0,0.5)); }
+    #enemy.kneeling {
+      transform: translateY(58px);
+    }
+    #enemy.kneeling .char-upper {
+      transform: translateY(8px) scaleY(0.92);
+      transform-origin: bottom center;
+    }
+    #enemy.kneeling.shooting {
+      transform: translateY(58px) translateX(-5px);
+    }
+    #enemy.dead {
+      transform: rotate(90deg) translateY(50px);
+      opacity: 0.4; filter: grayscale(0.9);
+      transition: transform 0.55s, opacity 0.55s;
+    }
+    #enemy.kneeling.dead {
+      transform: rotate(85deg) translateY(35px);
+    }
+
+    .char-upper {
+      transition: transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+      transform-origin: bottom center;
+    }
+
+    /* Joelhos visuais ao agachar */
+    .knee-pad {
+      position: absolute; bottom: 8px; width: 22px; height: 14px;
+      background: radial-gradient(ellipse, rgba(0,0,0,0.25) 0%, transparent 70%);
+      border-radius: 50%; opacity: 0; transition: opacity 0.3s;
+      pointer-events: none; z-index: 14;
+    }
+    #player-knee-l { left: 12%; }
+    #player-knee-r { left: calc(8% + 55px); }
+    #enemy-knee-l { right: calc(8% + 55px); }
+    #enemy-knee-r { right: 12%; }
+    .knee-pad.visible { opacity: 1; }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-7px); }
+      40% { transform: translateX(7px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+
+    .arm-hurt-overlay {
+      position: absolute; top: 0; left: 0;
+      width: 110px; height: 200px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s; z-index: 2;
+    }
+
+    .hitbox { position: absolute; z-index: 18; }
+    #hit-head { right: 10%; bottom: calc(28% + 155px); width: 70px; height: 50px; }
+    #hit-body { right: 9%; bottom: calc(28% + 85px); width: 85px; height: 70px; }
+    #hit-arm { right: 3%; bottom: calc(28% + 95px); width: 50px; height: 50px; }
+    #hit-legs { right: 10%; bottom: 28%; width: 80px; height: 75px; }
+
+    /* Hitboxes sobem quando inimigo ajoelha */
+    body.enemy-kneeling #hit-head { bottom: calc(28% + 97px); }
+    body.enemy-kneeling #hit-body { bottom: calc(28% + 45px); height: 55px; }
+    body.enemy-kneeling #hit-arm { bottom: calc(28% + 55px); }
+    body.enemy-kneeling #hit-legs { bottom: 28%; height: 40px; }
+
+    #revolver-ui {
+      position: absolute; bottom: 25px; left: 30px;
+      width: 160px; height: 120px; z-index: 25;
+      transition: filter 0.15s, transform 0.1s;
+    }
+    #revolver-ui.armed {
+      filter: drop-shadow(0 0 14px #FFD700) drop-shadow(0 0 28px rgba(255,165,0,0.5));
+      transform: scale(1.05);
+    }
+    #revolver-ui.shooting {
+      filter: drop-shadow(0 0 25px #FF4500) drop-shadow(0 0 50px #FF0000);
+      transform: scale(1.08) rotate(-3deg);
+    }
+    #cylinder {
+      position: absolute; bottom: 58px; left: 58px;
+      width: 60px; height: 60px; border-radius: 50%;
+      border: 3px solid transparent; z-index: 30;
+    }
+    #cylinder.ready {
+      border-color: #FFD700;
+      box-shadow: 0 0 18px #FFD700, inset 0 0 12px rgba(255,215,0,0.35);
+      animation: pulse-gold 0.9s infinite;
+    }
+    @keyframes pulse-gold {
+      0%, 100% { box-shadow: 0 0 12px #FFD700, inset 0 0 8px rgba(255,215,0,0.3); }
+      50% { box-shadow: 0 0 28px #FFD700, 0 0 40px rgba(255,165,0,0.4), inset 0 0 16px rgba(255,215,0,0.5); }
+    }
+    #muzzle-flash, #enemy-muzzle {
+      position: absolute; width: 50px; height: 50px;
+      background: radial-gradient(circle, #FFF 0%, #FFD700 25%, #FF4500 55%, transparent 70%);
+      border-radius: 50%; opacity: 0; pointer-events: none;
+    }
+    #muzzle-flash { bottom: 85px; left: 155px; z-index: 26; }
+    #enemy-muzzle { bottom: 52%; right: 18%; z-index: 20; width: 40px; height: 40px; }
+    body.enemy-kneeling #enemy-muzzle { bottom: calc(28% + 95px); }
+    #muzzle-flash.active, #enemy-muzzle.active { animation: muzzle 0.22s ease-out forwards; }
+    @keyframes muzzle {
+      0% { opacity: 1; transform: scale(0.3); }
+      40% { opacity: 1; transform: scale(1.4); }
+      100% { opacity: 0; transform: scale(2.2); }
+    }
+
+    #message {
+      position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 18px; color: #FFF8DC;
+      text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 4px 4px 12px rgba(0,0,0,0.9);
+      text-align: center; z-index: 40; pointer-events: none;
+      min-width: 340px; line-height: 1.55; transition: all 0.15s;
+    }
+    #message.draw {
+      color: #FF4500; font-size: 48px;
+      animation: flash-draw 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-shadow: 0 0 30px #FF4500, 0 0 60px rgba(255,69,0,0.5), 3px 3px 0 #000;
+    }
+    @keyframes flash-draw {
+      0% { transform: translateX(-50%) scale(0.3); opacity: 0; }
+      60% { transform: translateX(-50%) scale(1.15); }
+      100% { transform: translateX(-50%) scale(1); opacity: 1; }
+    }
+    #message.win { color: #32CD32; font-size: 16px; }
+    #message.lose { color: #DC143C; font-size: 16px; }
+    #message.info { color: #FFD700; font-size: 14px; }
+    #message.hit-info { color: #FFA500; font-size: 14px; }
+
+    .hp-bar-container {
+      position: absolute; z-index: 45;
+      width: 110px; height: 16px;
+      background: rgba(0,0,0,0.75);
+      border: 2px solid #5A4030; border-radius: 5px; overflow: hidden;
+    }
+    #player-hp-bar { left: 7%; bottom: calc(28% + 215px); transition: bottom 0.35s; }
+    #enemy-hp-bar { right: 7%; bottom: calc(28% + 215px); transition: bottom 0.35s; }
+    body.player-kneeling #player-hp-bar { bottom: calc(28% + 157px); }
+    body.enemy-kneeling #enemy-hp-bar { bottom: calc(28% + 157px); }
+    .hp-fill { height: 100%; transition: width 0.35s ease; border-radius: 3px; }
+    #player-hp-fill { background: linear-gradient(90deg, #1a6b1a, #32CD32); width: 100%; }
+    #enemy-hp-fill { background: linear-gradient(90deg, #8B0000, #DC143C); width: 100%; }
+    .hp-label {
+      position: absolute; top: -18px; left: 0; right: 0;
+      text-align: center; font-size: 9px; color: #FFD700;
+      text-shadow: 1px 1px 0 #000; font-family: 'Press Start 2P', monospace;
+    }
+
+    #hud {
+      position: absolute; top: 12px; left: 12px;
+      background: linear-gradient(135deg, rgba(20,12,5,0.9), rgba(40,25,10,0.85));
+      border: 2px solid #8B6914; border-radius: 10px;
+      padding: 12px 16px; color: #FFD700; font-size: 12px;
+      z-index: 50; min-width: 195px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    #hud h3 {
+      margin-bottom: 8px; font-family: 'Press Start 2P', monospace;
+      font-size: 10px; border-bottom: 1px solid #8B6914; padding-bottom: 5px;
+    }
+    #hud p { margin: 4px 0; display: flex; justify-content: space-between; gap: 10px; }
+    #hud .val { color: #FFF8DC; font-weight: 700; }
+
+    #diff-badge {
+      position: absolute; top: 12px; right: 12px;
+      padding: 8px 14px; border-radius: 8px;
+      font-family: 'Press Start 2P', monospace; font-size: 9px;
+      z-index: 50; box-shadow: 0 3px 12px rgba(0,0,0,0.4);
+    }
+    #diff-badge.easy { background: #1a5c1a; color: #90EE90; border: 2px solid #32CD32; }
+    #diff-badge.medium { background: #5c4a1a; color: #FFD700; border: 2px solid #DAA520; }
+    #diff-badge.hard { background: #5c1a1a; color: #FF6B6B; border: 2px solid #DC143C; }
+    #diff-badge.livre { background: #1a3a5c; color: #87CEEB; border: 2px solid #4A9EDB; }
+    #diff-badge.extreme { background: #4a1a5c; color: #DA70D6; border: 2px solid #BA55D3; }
+    #diff-badge.impossible { background: #1a0a0a; color: #FF2222; border: 2px solid #8B0000; animation: pulse-imp 1s infinite; }
+    @keyframes pulse-imp {
+      0%, 100% { box-shadow: 0 0 8px #FF0000; }
+      50% { box-shadow: 0 0 20px #FF0000, 0 0 40px rgba(255,0,0,0.5); }
+    }
+
+    #instructions {
+      position: absolute; bottom: 18px; right: 18px;
+      background: linear-gradient(135deg, rgba(20,12,5,0.9), rgba(40,25,10,0.85));
+      border: 2px solid #8B6914; border-radius: 10px;
+      padding: 12px 14px; color: #F5DEB3; font-size: 11px;
+      max-width: 270px; z-index: 50; line-height: 1.55;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    #instructions h4 { color: #FFD700; margin-bottom: 5px; font-size: 11px; }
+
+    .zone-hint {
+      position: absolute; z-index: 19; pointer-events: none;
+      font-size: 8px; font-family: 'Press Start 2P', monospace;
+      color: rgba(255,215,0,0.75); text-shadow: 1px 1px 0 #000;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .zone-hint.visible { opacity: 1; }
+    #hint-head { right: 11%; bottom: calc(28% + 205px); }
+    #hint-body { right: 13%; bottom: calc(28% + 115px); }
+    #hint-arm { right: 1%; bottom: calc(28% + 115px); color: rgba(255,165,0,0.8); }
+    #hint-legs { right: 12%; bottom: calc(28% + 15px); color: rgba(100,200,255,0.8); }
+    body.enemy-kneeling #hint-head { bottom: calc(28% + 147px); }
+    body.enemy-kneeling #hint-body { bottom: calc(28% + 70px); }
+    body.enemy-kneeling #hint-arm { bottom: calc(28% + 70px); }
+    body.enemy-kneeling #hint-legs { bottom: calc(28% + 5px); }
+
+    #crosshair {
+      position: fixed; width: 28px; height: 28px;
+      pointer-events: none; z-index: 100; transform: translate(-50%, -50%);
+    }
+    #crosshair::before, #crosshair::after {
+      content: ''; position: absolute; background: #FFD700;
+      box-shadow: 0 0 4px rgba(0,0,0,0.8);
+    }
+    #crosshair::before { width: 2px; height: 100%; left: 50%; transform: translateX(-50%); }
+    #crosshair::after { height: 2px; width: 100%; top: 50%; transform: translateY(-50%); }
+    #crosshair .dot {
+      position: absolute; width: 6px; height: 6px;
+      background: #FF4500; border-radius: 50%;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      box-shadow: 0 0 6px #FF4500;
+    }
+    #crosshair.armed .dot { background: #32CD32; box-shadow: 0 0 8px #32CD32; }
+
+    #zone-label {
+      position: fixed; pointer-events: none; z-index: 101;
+      font-family: 'Press Start 2P', monospace; font-size: 9px;
+      color: #FFD700; text-shadow: 1px 1px 0 #000;
+      transform: translate(-50%, 22px); opacity: 0; transition: opacity 0.12s;
+    }
+    #zone-label.show { opacity: 1; }
+
+    #overlay {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, rgba(40,25,10,0.93) 0%, rgba(10,6,2,0.98) 100%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 60; color: #FFD700; overflow-y: auto; padding: 20px;
+    }
+    #overlay h1 {
+      font-family: 'Press Start 2P', monospace; font-size: 22px; margin-bottom: 8px;
+      text-shadow: 4px 4px 0 #000, 0 0 30px rgba(255,215,0,0.4);
+    }
+    #overlay .subtitle { font-size: 12px; color: #D2B48C; margin-bottom: 12px; }
+    #overlay .desc {
+      font-size: 11px; color: #C4A484; max-width: 580px;
+      text-align: center; line-height: 1.65; margin-bottom: 2px;
+    }
+
+    .diff-select {
+      display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 8px;
+      justify-content: center; max-width: 720px;
+    }
+    .diff-btn {
+      padding: 10px 14px; font-family: 'Press Start 2P', monospace; font-size: 9px;
+      border-radius: 10px; cursor: pointer; transition: all 0.2s;
+      border: 3px solid; min-width: 110px; text-align: center;
+    }
+    .diff-btn .diff-name { display: block; margin-bottom: 4px; font-size: 10px; }
+    .diff-btn .diff-info { font-size: 7px; opacity: 0.85; line-height: 1.45; font-family: 'Roboto Mono', monospace; }
+    .diff-btn.easy { background: linear-gradient(to bottom, #2a6a2a, #1a4a1a); color: #90EE90; border-color: #32CD32; }
+    .diff-btn.easy:hover, .diff-btn.easy.selected { background: linear-gradient(to bottom, #3a8a3a, #2a6a2a); box-shadow: 0 0 20px rgba(50,205,50,0.5); transform: scale(1.05); }
+    .diff-btn.medium { background: linear-gradient(to bottom, #6a5a1a, #4a3a0a); color: #FFD700; border-color: #DAA520; }
+    .diff-btn.medium:hover, .diff-btn.medium.selected { background: linear-gradient(to bottom, #8a7a2a, #6a5a1a); box-shadow: 0 0 20px rgba(255,215,0,0.5); transform: scale(1.05); }
+    .diff-btn.hard { background: linear-gradient(to bottom, #6a1a1a, #4a0a0a); color: #FF6B6B; border-color: #DC143C; }
+    .diff-btn.hard:hover, .diff-btn.hard.selected { background: linear-gradient(to bottom, #8a2a2a, #6a1a1a); box-shadow: 0 0 20px rgba(220,20,60,0.5); transform: scale(1.05); }
+    .diff-btn.livre { background: linear-gradient(to bottom, #1a4a6a, #0a2a4a); color: #87CEEB; border-color: #4A9EDB; }
+    .diff-btn.livre:hover, .diff-btn.livre.selected { background: linear-gradient(to bottom, #2a6a8a, #1a4a6a); box-shadow: 0 0 20px rgba(74,158,219,0.5); transform: scale(1.05); }
+    .diff-btn.extreme { background: linear-gradient(to bottom, #5a1a6a, #3a0a4a); color: #DA70D6; border-color: #BA55D3; }
+    .diff-btn.extreme:hover, .diff-btn.extreme.selected { background: linear-gradient(to bottom, #7a2a8a, #5a1a6a); box-shadow: 0 0 20px rgba(186,85,211,0.5); transform: scale(1.05); }
+    .diff-btn.impossible { background: linear-gradient(to bottom, #3a0a0a, #1a0000); color: #FF4444; border-color: #8B0000; }
+    .diff-btn.impossible:hover, .diff-btn.impossible.selected { background: linear-gradient(to bottom, #5a1a1a, #3a0a0a); box-shadow: 0 0 25px rgba(255,0,0,0.6); transform: scale(1.05); }
+
+    #start-btn {
+      margin-top: 14px; padding: 12px 36px; font-size: 12px;
+      font-family: 'Press Start 2P', monospace;
+      background: linear-gradient(to bottom, #8B4513, #5D3A1A);
+      color: #FFD700; border: 3px solid #FFD700; border-radius: 10px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    #start-btn:hover { background: linear-gradient(to bottom, #A0522D, #8B4513); transform: scale(1.05); box-shadow: 0 0 30px rgba(255,215,0,0.5); }
+    #start-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .hidden { display: none !important; }
+    .particle { position: absolute; border-radius: 50%; pointer-events: none; z-index: 22; }
+    .char-shadow {
+      position: absolute; bottom: 27%; width: 80px; height: 18px;
+      background: radial-gradient(ellipse, rgba(0,0,0,0.35) 0%, transparent 70%);
+      border-radius: 50%; z-index: 10; transition: bottom 0.35s, width 0.35s;
+    }
+    .shadow-player { left: 10%; }
+    .shadow-enemy { right: 10%; }
+    body.player-kneeling .shadow-player { bottom: 26%; width: 95px; }
+    body.enemy-kneeling .shadow-enemy { bottom: 26%; width: 95px; }
+
+    #game-container::after {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.35) 100%);
+      pointer-events: none; z-index: 3;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <div class="sun"></div>
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+    <div class="cloud cloud3"></div>
+    <div class="mountains-far"></div>
+    <div class="mountains-near"></div>
+    <div class="ground"></div>
+
+    <div class="cactus cactus1"><div class="cactus-body"><div class="cactus-arm arm-l"></div><div class="cactus-arm arm-r"></div></div></div>
+    <div class="cactus cactus2"><div class="cactus-body"><div class="cactus-arm arm-l"></div></div></div>
+    <div class="cactus cactus3"><div class="cactus-body"><div class="cactus-arm arm-r"></div></div></div>
+
+    <div class="char-shadow shadow-player"></div>
+    <div class="char-shadow shadow-enemy"></div>
+    <div class="knee-pad" id="player-knee-l"></div>
+    <div class="knee-pad" id="player-knee-r"></div>
+    <div class="knee-pad" id="enemy-knee-l"></div>
+    <div class="knee-pad" id="enemy-knee-r"></div>
+
+    <div class="hp-bar-container" id="player-hp-bar">
+      <div class="hp-label">VOCÊ</div>
+      <div class="hp-fill" id="player-hp-fill"></div>
+    </div>
+    <div class="hp-bar-container" id="enemy-hp-bar">
+      <div class="hp-label">INIMIGO</div>
+      <div class="hp-fill" id="enemy-hp-fill"></div>
+    </div>
+
+    <!-- JOGADOR -->
+    <div id="player">
+      <div class="char-upper">
+        <svg viewBox="0 0 110 200" width="110" height="200">
+          <ellipse cx="55" cy="36" rx="38" ry="9" fill="#2A1A0A"/>
+          <rect x="35" y="14" width="40" height="24" rx="5" fill="#3D2814"/>
+          <ellipse cx="55" cy="16" rx="22" ry="7" fill="#2A1A0A"/>
+          <circle cx="55" cy="48" r="18" fill="#D4A574"/>
+          <path d="M38 42 Q40 30 55 28 Q70 30 72 42" fill="#3D2814"/>
+          <circle cx="48" cy="46" r="3" fill="#1A1A1A"/>
+          <circle cx="62" cy="46" r="3" fill="#1A1A1A"/>
+          <circle cx="49" cy="45" r="1" fill="#FFF"/>
+          <circle cx="63" cy="45" r="1" fill="#FFF"/>
+          <path d="M43 41 L53 40" stroke="#3D2814" stroke-width="2" stroke-linecap="round"/>
+          <path d="M57 40 L67 41" stroke="#3D2814" stroke-width="2" stroke-linecap="round"/>
+          <path d="M48 56 Q55 58 62 56" fill="none" stroke="#8B5A3A" stroke-width="1.5"/>
+          <path d="M38 62 Q55 72 72 62 L70 78 Q55 85 40 78 Z" fill="#1E5A8A"/>
+          <path d="M40 78 L35 95 L42 82" fill="#1E5A8A"/>
+          <rect x="35" y="78" width="40" height="50" rx="5" fill="#4A3020"/>
+          <rect x="40" y="82" width="30" height="42" rx="3" fill="#5A4030"/>
+          <circle cx="55" cy="92" r="2.5" fill="#C4A050"/>
+          <circle cx="55" cy="105" r="2.5" fill="#C4A050"/>
+          <circle cx="55" cy="118" r="2.5" fill="#C4A050"/>
+          <rect x="18" y="82" width="18" height="14" rx="5" fill="#D4A574"/>
+          <rect x="74" y="82" width="22" height="13" rx="5" fill="#D4A574"/>
+          <g transform="translate(90, 84)">
+            <rect x="0" y="2" width="22" height="8" rx="2" fill="#2A2A2A"/>
+            <rect x="18" y="3" width="12" height="5" rx="1" fill="#1A1A1A"/>
+            <circle cx="6" cy="6" r="5" fill="#3A3A3A" stroke="#1A1A1A" stroke-width="1"/>
+          </g>
+          <rect x="33" y="125" width="44" height="10" rx="2" fill="#3D2814"/>
+          <rect x="48" y="124" width="14" height="12" rx="2" fill="#C4A050"/>
+          <rect x="38" y="134" width="14" height="48" rx="4" fill="#1A2A3A"/>
+          <rect x="58" y="134" width="14" height="48" rx="4" fill="#1A2A3A"/>
+          <rect x="34" y="178" width="20" height="14" rx="3" fill="#2A1A0A"/>
+          <rect x="56" y="178" width="20" height="14" rx="3" fill="#2A1A0A"/>
+          <rect x="34" y="186" width="22" height="6" rx="2" fill="#1A1005"/>
+          <rect x="56" y="186" width="22" height="6" rx="2" fill="#1A1005"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- INIMIGO -->
+    <div id="enemy">
+      <div class="char-upper">
+        <svg viewBox="0 0 110 200" width="110" height="200">
+          <ellipse cx="55" cy="36" rx="38" ry="9" fill="#1A1A1A"/>
+          <rect x="35" y="14" width="40" height="24" rx="5" fill="#2A2A2A"/>
+          <ellipse cx="55" cy="16" rx="22" ry="7" fill="#1A1A1A"/>
+          <circle cx="55" cy="48" r="18" fill="#C49464"/>
+          <path d="M38 42 Q40 30 55 28 Q70 30 72 42" fill="#1A1A1A"/>
+          <circle cx="48" cy="46" r="3.5" fill="#1A1A1A"/>
+          <circle cx="62" cy="46" r="3.5" fill="#1A1A1A"/>
+          <circle cx="47" cy="45" r="1.2" fill="#FF4444"/>
+          <circle cx="61" cy="45" r="1.2" fill="#FF4444"/>
+          <path d="M65 40 L72 50" stroke="#8B3A2A" stroke-width="1.5" fill="none"/>
+          <path d="M42 54 Q55 60 68 54" fill="none" stroke="#1A1A1A" stroke-width="2.5"/>
+          <path d="M38 62 Q55 72 72 62 L70 78 Q55 85 40 78 Z" fill="#8B0000"/>
+          <path d="M70 78 L75 95 L68 82" fill="#8B0000"/>
+          <rect x="35" y="78" width="40" height="50" rx="5" fill="#1A1A1A"/>
+          <rect x="40" y="82" width="30" height="42" rx="3" fill="#2A2A2A"/>
+          <polygon points="55,95 57,100 62,100 58,103 60,108 55,105 50,108 52,103 48,100 53,100" fill="#C4A050" opacity="0.7"/>
+          <g>
+            <rect x="14" y="82" width="22" height="13" rx="5" fill="#C49464"/>
+            <g transform="translate(0, 84)">
+              <rect x="0" y="2" width="20" height="8" rx="2" fill="#2A2A2A"/>
+              <rect x="-8" y="3" width="12" height="5" rx="1" fill="#1A1A1A"/>
+              <circle cx="14" cy="6" r="5" fill="#3A3A3A" stroke="#1A1A1A" stroke-width="1"/>
+            </g>
+          </g>
+          <rect x="74" y="82" width="18" height="14" rx="5" fill="#C49464"/>
+          <rect x="33" y="125" width="44" height="10" rx="2" fill="#1A1A1A"/>
+          <rect x="48" y="124" width="14" height="12" rx="2" fill="#8B0000"/>
+          <rect x="38" y="134" width="14" height="48" rx="4" fill="#1A1A1A"/>
+          <rect x="58" y="134" width="14" height="48" rx="4" fill="#1A1A1A"/>
+          <rect x="34" y="178" width="20" height="14" rx="3" fill="#0A0A0A"/>
+          <rect x="56" y="178" width="20" height="14" rx="3" fill="#0A0A0A"/>
+          <rect x="32" y="186" width="24" height="6" rx="2" fill="#000"/>
+          <rect x="54" y="186" width="24" height="6" rx="2" fill="#000"/>
+        </svg>
+      </div>
+      <div class="arm-hurt-overlay" id="arm-hurt-vis">
+        <svg viewBox="0 0 110 200" width="110" height="200">
+          <rect x="58" y="68" width="15" height="42" rx="5" fill="#C49464" transform="rotate(40 70 90)"/>
+          <circle cx="40" cy="90" r="9" fill="#C49464"/>
+          <circle cx="38" cy="88" r="3" fill="#A07050"/>
+          <circle cx="72" cy="36" r="2.5" fill="#7EC8E3" opacity="0.85"/>
+          <circle cx="78" cy="41" r="1.8" fill="#7EC8E3" opacity="0.6"/>
+          <text x="55" y="55" text-anchor="middle" font-size="14" fill="#FF2222" opacity="0.9">&#10006;</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="hitbox" id="hit-head" data-zone="head"></div>
+    <div class="hitbox" id="hit-body" data-zone="body"></div>
+    <div class="hitbox" id="hit-arm" data-zone="arm"></div>
+    <div class="hitbox" id="hit-legs" data-zone="legs"></div>
+
+    <div class="zone-hint" id="hint-head">CABEÇA</div>
+    <div class="zone-hint" id="hint-body">CORPO</div>
+    <div class="zone-hint" id="hint-arm">BRAÇO</div>
+    <div class="zone-hint" id="hint-legs">PERNAS</div>
+
+    <div id="enemy-muzzle"></div>
+
+    <div id="revolver-ui">
+      <svg viewBox="0 0 160 120" width="160" height="120">
+        <path d="M12 65 Q5 82 18 100 L42 92 Q35 75 28 65 Z" fill="#5A3A1A" stroke="#3A2010" stroke-width="2"/>
+        <rect x="28" y="48" width="78" height="26" rx="5" fill="#3A3A3A" stroke="#1A1A1A" stroke-width="2"/>
+        <rect x="30" y="50" width="74" height="8" rx="2" fill="#4A4A4A"/>
+        <rect x="100" y="52" width="52" height="14" rx="3" fill="#2A2A2A" stroke="#1A1A1A" stroke-width="1.5"/>
+        <rect x="148" y="48" width="5" height="8" rx="1" fill="#1A1A1A"/>
+        <circle cx="62" cy="61" r="24" fill="#2A2A2A" stroke="#1A1A1A" stroke-width="3"/>
+        <circle cx="62" cy="61" r="18" fill="#3A3A3A" stroke="#555" stroke-width="1.5"/>
+        <circle cx="62" cy="61" r="6" fill="#1A1A1A"/>
+        <circle cx="62" cy="46" r="5.5" fill="#1A1A1A"/><circle cx="75" cy="53" r="5.5" fill="#1A1A1A"/>
+        <circle cx="75" cy="69" r="5.5" fill="#1A1A1A"/><circle cx="62" cy="76" r="5.5" fill="#1A1A1A"/>
+        <circle cx="49" cy="69" r="5.5" fill="#1A1A1A"/><circle cx="49" cy="53" r="5.5" fill="#1A1A1A"/>
+        <path d="M45 74 Q48 92 58 88" fill="none" stroke="#1A1A1A" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M38 48 L32 40 L38 42 Z" fill="#2A2A2A"/>
+      </svg>
+    </div>
+    <div id="cylinder"></div>
+    <div id="muzzle-flash"></div>
+
+    <div id="message">Escolha o modo</div>
+    <div id="hud">
+      <h3>🤠 DUELO</h3>
+      <p>Rodada: <span class="val" id="round">1</span></p>
+      <p>Tiros: <span class="val" id="hits">0</span></p>
+      <p>Headshots: <span class="val" id="headshots">0</span></p>
+      <p>Melhor: <span class="val" id="best">—</span></p>
+      <p>Último: <span class="val" id="last">—</span></p>
+    </div>
+    <div id="diff-badge" class="hidden">FÁCIL</div>
+    <div id="instructions">
+      <h4>📋 Zonas de acerto</h4>
+      <b style="color:#FF4500">CABEÇA</b> → Morte instantânea<br>
+      <b style="color:#FFA500">BRAÇO</b> → Segura o braço com dor<br>
+      <b style="color:#87CEEB">PERNAS</b> → Ajoelha de verdade<br>
+      <b>CORPO</b> → Dano normal<br>
+      Vários tiros matam de qualquer forma!
+    </div>
+    <div id="crosshair"><div class="dot"></div></div>
+    <div id="zone-label"></div>
+  </div>
+
+  <div id="overlay">
+    <h1>🤠 DUELO DE FAROESTE</h1>
+    <p class="subtitle">Mire nas zonas certas para vencer</p>
+    <p class="desc">
+      Mantenha o mouse no <b>tambor</b>. No <b style="color:#FF4500">DRAW!</b>, arraste até uma zona.<br>
+      <b style="color:#FF4500">Cabeça</b> = kill · <b style="color:#87CEEB">Pernas</b> = ajoelha · <b style="color:#FFA500">Braço</b> = dor
+    </p>
+    <p class="desc" style="font-size:10px; color:#888; margin-bottom: 8px;">
+      <b style="color:#87CEEB">LIVRE</b> = sem limite de tempo após o DRAW · <b style="color:#FF4444">IMPOSSÍVEL</b> ≈ quase impossível
+    </p>
+    <div class="diff-select">
+      <button class="diff-btn easy" data-diff="easy">
+        <span class="diff-name">FÁCIL</span>
+        <span class="diff-info">Vida 4 · 1.3s<br>Inimigo lento</span>
+      </button>
+      <button class="diff-btn medium" data-diff="medium">
+        <span class="diff-name">MÉDIO</span>
+        <span class="diff-info">Vida 3 · 0.95s<br>Equilibrado</span>
+      </button>
+      <button class="diff-btn hard" data-diff="hard">
+        <span class="diff-name">DIFÍCIL</span>
+        <span class="diff-info">Vida 3 · 0.65s<br>Rápido</span>
+      </button>
+      <button class="diff-btn livre" data-diff="livre">
+        <span class="diff-name">LIVRE</span>
+        <span class="diff-info">Sem cooldown<br>Mire com calma</span>
+      </button>
+      <button class="diff-btn extreme" data-diff="extreme">
+        <span class="diff-name">EXTREMO</span>
+        <span class="diff-info">Vida 4 · 0.38s<br>Muito rápido</span>
+      </button>
+      <button class="diff-btn impossible" data-diff="impossible">
+        <span class="diff-name">IMPOSSÍVEL</span>
+        <span class="diff-info">Vida 5 · 0.20s<br>Quase impossível</span>
+      </button>
+    </div>
+    <button id="start-btn" disabled>SELECIONE O MODO</button>
+  </div>
+
+  <script>
+    const DIFFICULTY = {
+      easy: {
+        label: 'FÁCIL', className: 'easy',
+        maxReaction: 1300, minDelay: 2000, maxDelay: 5000,
+        maxHP: 4, killShots: 4, noTimeout: false
+      },
+      medium: {
+        label: 'MÉDIO', className: 'medium',
+        maxReaction: 950, minDelay: 1500, maxDelay: 4500,
+        maxHP: 3, killShots: 3, noTimeout: false
+      },
+      hard: {
+        label: 'DIFÍCIL', className: 'hard',
+        maxReaction: 650, minDelay: 1000, maxDelay: 5000,
+        maxHP: 3, killShots: 3, noTimeout: false
+      },
+      livre: {
+        label: 'LIVRE', className: 'livre',
+        maxReaction: null, minDelay: 1500, maxDelay: 4000,
+        maxHP: 3, killShots: 3, noTimeout: true
+      },
+      extreme: {
+        label: 'EXTREMO', className: 'extreme',
+        maxReaction: 380, minDelay: 800, maxDelay: 4500,
+        maxHP: 4, killShots: 4, noTimeout: false
+      },
+      impossible: {
+        label: 'IMPOSSÍVEL', className: 'impossible',
+        maxReaction: 200, minDelay: 1500, maxDelay: 7000,
+        maxHP: 5, killShots: 5, noTimeout: false
+      }
+    };
+
+    const state = {
+      phase: 'idle',
+      mouseOnCylinder: false,
+      reactionStart: 0,
+      round: 1,
+      hits: 0,
+      headshots: 0,
+      bestTime: null,
+      lastTime: null,
+      waitTimeout: null,
+      difficulty: null,
+      selectedDiff: null,
+      playerHP: 3,
+      enemyHP: 3,
+      maxHP: 3,
+      killShots: 3,
+      enemyShotsTaken: 0,
+      enemyKneeling: false,
+      playerKneeling: false,
+      enemyArmHurt: false,
+      canShoot: false,
+      noTimeout: false
+    };
+
+    const cylinder = document.getElementById('cylinder');
+    const revolverUI = document.getElementById('revolver-ui');
+    const player = document.getElementById('player');
+    const enemy = document.getElementById('enemy');
+    const message = document.getElementById('message');
+    const overlay = document.getElementById('overlay');
+    const startBtn = document.getElementById('start-btn');
+    const crosshair = document.getElementById('crosshair');
+    const muzzleFlash = document.getElementById('muzzle-flash');
+    const enemyMuzzle = document.getElementById('enemy-muzzle');
+    const diffBadge = document.getElementById('diff-badge');
+    const zoneLabel = document.getElementById('zone-label');
+    const playerHpFill = document.getElementById('player-hp-fill');
+    const enemyHpFill = document.getElementById('enemy-hp-fill');
+    const armHurtVis = document.getElementById('arm-hurt-vis');
+
+    const hitboxes = {
+      head: document.getElementById('hit-head'),
+      body: document.getElementById('hit-body'),
+      arm: document.getElementById('hit-arm'),
+      legs: document.getElementById('hit-legs')
+    };
+    const hints = {
+      head: document.getElementById('hint-head'),
+      body: document.getElementById('hint-body'),
+      arm: document.getElementById('hint-arm'),
+      legs: document.getElementById('hint-legs')
+    };
+
+    document.addEventListener('mousemove', (e) => {
+      crosshair.style.left = e.clientX + 'px';
+      crosshair.style.top = e.clientY + 'px';
+      zoneLabel.style.left = e.clientX + 'px';
+      zoneLabel.style.top = e.clientY + 'px';
+    });
+
+    document.querySelectorAll('.diff-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        state.selectedDiff = btn.dataset.diff;
+        startBtn.disabled = false;
+        startBtn.textContent = 'COMEÇAR DUELO';
+      });
+    });
+
+    cylinder.addEventListener('mouseenter', () => {
+      state.mouseOnCylinder = true;
+      crosshair.classList.add('armed');
+      if (state.phase === 'waiting' || state.phase === 'idle') {
+        cylinder.classList.add('ready');
+        revolverUI.classList.add('armed');
+        player.classList.add('ready');
+      }
+    });
+    cylinder.addEventListener('mouseleave', () => {
+      state.mouseOnCylinder = false;
+      crosshair.classList.remove('armed');
+      cylinder.classList.remove('ready');
+      revolverUI.classList.remove('armed');
+      player.classList.remove('ready');
+      if (state.phase === 'waiting') {
+        clearTimeout(state.waitTimeout);
+        message.textContent = 'Mantenha no tambor!';
+        message.className = 'lose';
+        setTimeout(() => { if (state.phase === 'waiting' || state.phase === 'idle') startWaiting(); }, 1000);
+      }
+    });
+
+    Object.entries(hitboxes).forEach(([zone, el]) => {
+      el.addEventListener('mouseenter', () => {
+        if (state.phase === 'draw' && state.canShoot) {
+          zoneLabel.textContent = ({ head: '🎯 CABEÇA', body: '💥 CORPO', arm: '😣 BRAÇO', legs: '🦵 PERNAS' })[zone];
+          zoneLabel.classList.add('show');
+        }
+      });
+      el.addEventListener('mouseleave', () => zoneLabel.classList.remove('show'));
+      el.addEventListener('mouseenter', () => tryShoot(zone));
+      el.addEventListener('mousedown', () => tryShoot(zone));
+    });
+
+    function tryShoot(zone) {
+      if (state.phase !== 'draw' || !state.canShoot || state.enemyHP <= 0) return;
+      state.canShoot = false;
+      playerShoot(zone);
+    }
+
+    function updateHPBars() {
+      const pPct = Math.max(0, (state.playerHP / state.maxHP) * 100);
+      const ePct = Math.max(0, (state.enemyHP / state.maxHP) * 100);
+      playerHpFill.style.width = pPct + '%';
+      enemyHpFill.style.width = ePct + '%';
+      if (pPct <= 33) playerHpFill.style.background = 'linear-gradient(90deg, #8B0000, #FF4444)';
+      else if (pPct <= 66) playerHpFill.style.background = 'linear-gradient(90deg, #8B6914, #FFD700)';
+      else playerHpFill.style.background = 'linear-gradient(90deg, #1a6b1a, #32CD32)';
+      if (ePct <= 33) enemyHpFill.style.background = 'linear-gradient(90deg, #4a0000, #8B0000)';
+      else enemyHpFill.style.background = 'linear-gradient(90deg, #8B0000, #DC143C)';
+    }
+
+    function showZoneHints(show) {
+      Object.values(hints).forEach(h => h.classList.toggle('visible', show));
+    }
+
+    function applyKneelBodyClass() {
+      document.body.classList.toggle('enemy-kneeling', state.enemyKneeling);
+      document.body.classList.toggle('player-kneeling', state.playerKneeling);
+      document.getElementById('enemy-knee-l').classList.toggle('visible', state.enemyKneeling);
+      document.getElementById('enemy-knee-r').classList.toggle('visible', state.enemyKneeling);
+      document.getElementById('player-knee-l').classList.toggle('visible', state.playerKneeling);
+      document.getElementById('player-knee-r').classList.toggle('visible', state.playerKneeling);
+    }
+
+    function applyEnemyVisuals() {
+      let cls = [];
+      if (state.enemyKneeling) cls.push('kneeling');
+      if (state.enemyArmHurt) cls.push('arm-hurt');
+      if (state.enemyHP <= 0) cls.push('dead');
+      enemy.className = cls.join(' ');
+      armHurtVis.style.opacity = state.enemyArmHurt ? '1' : '0';
+      applyKneelBodyClass();
+    }
+
+    function applyPlayerVisuals() {
+      let cls = [];
+      if (state.playerKneeling) cls.push('kneeling');
+      if (state.playerHP <= 0) cls.push('dead');
+      else if (state.mouseOnCylinder && (state.phase === 'waiting' || state.phase === 'idle')) cls.push('ready');
+      player.className = cls.join(' ');
+      applyKneelBodyClass();
+    }
+
+    function startWaiting() {
+      if (state.playerHP <= 0 || state.enemyHP <= 0) return;
+      state.phase = 'waiting';
+      state.canShoot = false;
+      message.className = 'info';
+      message.textContent = state.noTimeout
+        ? 'Mantenha no tambor... (modo LIVRE: sem limite)'
+        : 'Mantenha o mouse no tambor...';
+      applyPlayerVisuals();
+      applyEnemyVisuals();
+      cylinder.classList.toggle('ready', state.mouseOnCylinder);
+      revolverUI.classList.toggle('armed', state.mouseOnCylinder);
+      crosshair.classList.toggle('armed', state.mouseOnCylinder);
+      showZoneHints(false);
+
+      const cfg = DIFFICULTY[state.difficulty];
+      const delay = cfg.minDelay + Math.random() * (cfg.maxDelay - cfg.minDelay);
+      state.waitTimeout = setTimeout(() => {
+        if (state.phase === 'waiting' && state.mouseOnCylinder) triggerDraw();
+        else if (state.phase === 'waiting') {
+          message.textContent = 'Coloque o mouse no tambor!';
+          message.className = 'lose';
+          setTimeout(startWaiting, 1200);
+        }
+      }, delay);
+    }
+
+    function triggerDraw() {
+      state.phase = 'draw';
+      state.canShoot = true;
+      state.reactionStart = performance.now();
+      message.textContent = 'DRAW!';
+      message.className = 'draw';
+      showZoneHints(true);
+      document.getElementById('game-container').style.filter = 'brightness(1.08) saturate(1.15)';
+      if (state.noTimeout) {
+        setTimeout(() => {
+          if (state.phase === 'draw') {
+            message.className = 'info';
+            message.textContent = 'DRAW! · Mire com calma (sem limite)';
+          }
+        }, 800);
+      }
+    }
+
+    function playerShoot(zone) {
+      const reactionTime = performance.now() - state.reactionStart;
+      state.lastTime = reactionTime;
+      if (state.bestTime === null || reactionTime < state.bestTime) state.bestTime = reactionTime;
+      state.hits++;
+      state.enemyShotsTaken++;
+
+      muzzleFlash.classList.add('active');
+      revolverUI.classList.add('shooting');
+      player.classList.add('shooting');
+      enemy.classList.add('hit-flash');
+
+      const rect = enemy.getBoundingClientRect();
+      spawnParticles(rect.left + 40, rect.top + 50, '#FF4500');
+
+      setTimeout(() => {
+        muzzleFlash.classList.remove('active');
+        revolverUI.classList.remove('shooting');
+        player.classList.remove('shooting');
+        enemy.classList.remove('hit-flash');
+      }, 250);
+
+      let killed = false;
+      let msg = '';
+
+      if (zone === 'head') {
+        state.enemyHP = 0;
+        state.headshots++;
+        killed = true;
+        msg = '🎯 HEADSHOT! ' + reactionTime.toFixed(0) + ' ms';
+      } else {
+        state.enemyHP = Math.max(0, state.enemyHP - 1);
+
+        if (zone === 'legs') {
+          state.enemyKneeling = true;
+          msg = '🦵 Pernas! Ajoelhou · ' + reactionTime.toFixed(0) + ' ms';
+        } else if (zone === 'arm') {
+          state.enemyArmHurt = true;
+          msg = '😣 Braço ferido! · ' + reactionTime.toFixed(0) + ' ms';
+        } else {
+          msg = '💥 Corpo! · ' + reactionTime.toFixed(0) + ' ms';
+        }
+
+        if (state.enemyShotsTaken >= state.killShots || state.enemyHP <= 0) {
+          state.enemyHP = 0;
+          killed = true;
+          msg = '💀 Abatido! (' + state.enemyShotsTaken + ' tiros) · ' + reactionTime.toFixed(0) + ' ms';
+        }
+      }
+
+      applyEnemyVisuals();
+      updateHPBars();
+      updateHUD();
+      showZoneHints(false);
+      zoneLabel.classList.remove('show');
+      document.getElementById('game-container').style.filter = '';
+
+      if (killed) {
+        state.phase = 'result';
+        enemy.classList.add('dead');
+        message.className = 'win';
+        message.innerHTML = msg;
+        setTimeout(() => endGame(true), 2200);
+      } else {
+        state.phase = 'result';
+        message.className = 'hit-info';
+        message.innerHTML = msg;
+        // No modo livre o inimigo também contra-ataca após você atirar
+        setTimeout(() => {
+          if (state.enemyHP > 0 && state.playerHP > 0) enemyShoot();
+        }, 900);
+      }
+    }
+
+    function enemyShoot() {
+      if (state.playerHP <= 0) return;
+      state.phase = 'result';
+
+      // Zona aleatória do tiro do inimigo (corpo/braço/pernas/raramente cabeça)
+      const roll = Math.random();
+      let zone = 'body';
+      if (roll < 0.08) zone = 'head';
+      else if (roll < 0.28) zone = 'legs';
+      else if (roll < 0.48) zone = 'arm';
+
+      enemyMuzzle.classList.add('active');
+      enemy.classList.add('shooting');
+      player.classList.add('hurt');
+      const prect = player.getBoundingClientRect();
+      spawnParticles(prect.left + 50, prect.top + 50, '#FF2222');
+
+      let msg = '';
+      if (zone === 'head') {
+        state.playerHP = 0;
+        msg = '💀 HEADSHOT do inimigo!';
+      } else {
+        state.playerHP = Math.max(0, state.playerHP - 1);
+        if (zone === 'legs') {
+          state.playerKneeling = true;
+          msg = '🦵 Tiro nas pernas! Você ajoelhou · Vida: ' + state.playerHP + '/' + state.maxHP;
+        } else if (zone === 'arm') {
+          msg = '😣 Tiro no braço! · Vida: ' + state.playerHP + '/' + state.maxHP;
+        } else {
+          msg = '💥 Você levou um tiro! · Vida: ' + state.playerHP + '/' + state.maxHP;
+        }
+      }
+
+      applyPlayerVisuals();
+      updateHPBars();
+
+      setTimeout(() => {
+        enemyMuzzle.classList.remove('active');
+        enemy.classList.remove('shooting');
+        player.classList.remove('hurt');
+      }, 280);
+
+      if (state.playerHP <= 0) {
+        player.classList.add('dead');
+        message.className = 'lose';
+        message.textContent = msg || '💀 Você foi abatido!';
+        setTimeout(() => endGame(false), 2000);
+      } else {
+        message.className = 'lose';
+        message.textContent = msg;
+        setTimeout(() => {
+          state.round++;
+          updateHUD();
+          startWaiting();
+        }, 1600);
+      }
+    }
+
+    function endGame(playerWon) {
+      state.phase = 'idle';
+      showZoneHints(false);
+      if (playerWon) {
+        message.className = 'win';
+        message.innerHTML = '🏆 VITÓRIA!<br><span style="font-size:12px">Headshots: ' + state.headshots + ' · Tiros: ' + state.hits + '</span>';
+      } else {
+        message.className = 'lose';
+        message.innerHTML = '☠️ DERROTA<br><span style="font-size:12px">Tente novamente!</span>';
+      }
+      setTimeout(() => {
+        overlay.classList.remove('hidden');
+        startBtn.disabled = false;
+        startBtn.textContent = 'JOGAR NOVAMENTE';
+        document.querySelectorAll('.diff-btn').forEach(b => {
+          b.classList.toggle('selected', b.dataset.diff === state.difficulty);
+        });
+        state.selectedDiff = state.difficulty;
+      }, 1800);
+    }
+
+    function checkTimeout() {
+      if (state.phase === 'draw' && state.canShoot && !state.noTimeout) {
+        const elapsed = performance.now() - state.reactionStart;
+        const maxTime = DIFFICULTY[state.difficulty].maxReaction;
+        const bonus = state.enemyKneeling ? 280 : 0;
+        if (maxTime != null && elapsed > maxTime + bonus) {
+          state.canShoot = false;
+          showZoneHints(false);
+          enemyShoot();
+        }
+      }
+      requestAnimationFrame(checkTimeout);
+    }
+
+    function spawnParticles(x, y, color) {
+      for (let i = 0; i < 14; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = x + 'px';
+        p.style.top = y + 'px';
+        p.style.width = (3 + Math.random() * 7) + 'px';
+        p.style.height = p.style.width;
+        p.style.background = color;
+        document.body.appendChild(p);
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2 + Math.random() * 6;
+        const vx = Math.cos(angle) * speed;
+        const vy = Math.sin(angle) * speed - 2;
+        let life = 1;
+        const anim = () => {
+          life -= 0.035;
+          if (life <= 0) { p.remove(); return; }
+          p.style.left = (parseFloat(p.style.left) + vx) + 'px';
+          p.style.top = (parseFloat(p.style.top) + vy + (1 - life) * 2.5) + 'px';
+          p.style.opacity = life;
+          p.style.transform = 'scale(' + life + ')';
+          requestAnimationFrame(anim);
+        };
+        requestAnimationFrame(anim);
+      }
+    }
+
+    function updateHUD() {
+      document.getElementById('round').textContent = state.round;
+      document.getElementById('hits').textContent = state.hits;
+      document.getElementById('headshots').textContent = state.headshots;
+      document.getElementById('best').textContent = state.bestTime ? state.bestTime.toFixed(0) + ' ms' : '—';
+      document.getElementById('last').textContent = state.lastTime ? state.lastTime.toFixed(0) + ' ms' : '—';
+    }
+
+    startBtn.addEventListener('click', () => {
+      if (!state.selectedDiff) return;
+      state.difficulty = state.selectedDiff;
+      const cfg = DIFFICULTY[state.difficulty];
+      overlay.classList.add('hidden');
+      diffBadge.textContent = cfg.label;
+      diffBadge.className = cfg.className;
+      diffBadge.classList.remove('hidden');
+
+      state.round = 1;
+      state.hits = 0;
+      state.headshots = 0;
+      state.bestTime = null;
+      state.lastTime = null;
+      state.maxHP = cfg.maxHP;
+      state.killShots = cfg.killShots;
+      state.playerHP = cfg.maxHP;
+      state.enemyHP = cfg.maxHP;
+      state.enemyShotsTaken = 0;
+      state.enemyKneeling = false;
+      state.playerKneeling = false;
+      state.enemyArmHurt = false;
+      state.canShoot = false;
+      state.noTimeout = !!cfg.noTimeout;
+
+      player.className = '';
+      enemy.className = '';
+      armHurtVis.style.opacity = '0';
+      document.body.classList.remove('enemy-kneeling', 'player-kneeling');
+      document.querySelectorAll('.knee-pad').forEach(k => k.classList.remove('visible'));
+      updateHPBars();
+      updateHUD();
+      startWaiting();
+      checkTimeout();
+    });
+
+    document.addEventListener('contextmenu', e => e.preventDefault());
+  </script>
+</body>
+</html>
