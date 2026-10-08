@@ -101,7 +101,6 @@
     .cactus3 .arm-r { width: 20px; height: 10px; top: 18px; right: -16px; transform: rotate(15deg); }
     .cactus3 .arm-r::after { content:''; position:absolute; width:10px; height:18px; background:inherit; border-radius:5px; top:-14px; right:0; }
 
-    /* ===== PERSONAGENS ===== */
     #player, #enemy {
       position: absolute; bottom: 28%;
       width: 110px; height: 200px; z-index: 15;
@@ -110,7 +109,6 @@
     }
     #player { left: 8%; }
     #enemy { right: 8%; }
-
     #player.ready { filter: drop-shadow(0 0 8px rgba(255,215,0,0.4)); }
     #player.shooting { transform: translateX(6px); filter: drop-shadow(0 0 15px rgba(255,100,0,0.6)); }
     #player.hurt { filter: brightness(1.5) sepia(0.5) hue-rotate(-25deg); animation: shake 0.35s; }
@@ -119,44 +117,30 @@
       opacity: 0.4; filter: grayscale(0.9);
       transition: transform 0.55s, opacity 0.55s;
     }
-    /* Agachar realista: desce o corpo, dobra visualmente (não só encolhe) */
-    #player.kneeling {
-      transform: translateY(58px);
-    }
+    #player.kneeling { transform: translateY(58px); }
     #player.kneeling .char-upper {
-      transform: translateY(8px) scaleY(0.92);
-      transform-origin: bottom center;
+      transform: translateY(8px) scaleY(0.92); transform-origin: bottom center;
     }
     #player.kneeling.shooting { transform: translateY(58px) translateX(5px); }
     #player.kneeling.dead { transform: rotate(-80deg) translateY(40px); }
 
     #enemy.hit-flash { filter: brightness(2.3) sepia(1) hue-rotate(-30deg) saturate(2); }
     #enemy.shooting { transform: translateX(-6px); filter: drop-shadow(0 0 12px rgba(255,50,0,0.5)); }
-    #enemy.kneeling {
-      transform: translateY(58px);
-    }
+    #enemy.kneeling { transform: translateY(58px); }
     #enemy.kneeling .char-upper {
-      transform: translateY(8px) scaleY(0.92);
-      transform-origin: bottom center;
+      transform: translateY(8px) scaleY(0.92); transform-origin: bottom center;
     }
-    #enemy.kneeling.shooting {
-      transform: translateY(58px) translateX(-5px);
-    }
+    #enemy.kneeling.shooting { transform: translateY(58px) translateX(-5px); }
     #enemy.dead {
       transform: rotate(90deg) translateY(50px);
       opacity: 0.4; filter: grayscale(0.9);
       transition: transform 0.55s, opacity 0.55s;
     }
-    #enemy.kneeling.dead {
-      transform: rotate(85deg) translateY(35px);
-    }
-
+    #enemy.kneeling.dead { transform: rotate(85deg) translateY(35px); }
     .char-upper {
       transition: transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
       transform-origin: bottom center;
     }
-
-    /* Joelhos visuais ao agachar */
     .knee-pad {
       position: absolute; bottom: 8px; width: 22px; height: 14px;
       background: radial-gradient(ellipse, rgba(0,0,0,0.25) 0%, transparent 70%);
@@ -168,7 +152,6 @@
     #enemy-knee-l { right: calc(8% + 55px); }
     #enemy-knee-r { right: 12%; }
     .knee-pad.visible { opacity: 1; }
-
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
       20% { transform: translateX(-7px); }
@@ -176,21 +159,17 @@
       60% { transform: translateX(-5px); }
       80% { transform: translateX(5px); }
     }
-
     .arm-hurt-overlay {
       position: absolute; top: 0; left: 0;
       width: 110px; height: 200px;
       opacity: 0; pointer-events: none;
       transition: opacity 0.35s; z-index: 2;
     }
-
     .hitbox { position: absolute; z-index: 18; }
     #hit-head { right: 10%; bottom: calc(28% + 155px); width: 70px; height: 50px; }
     #hit-body { right: 9%; bottom: calc(28% + 85px); width: 85px; height: 70px; }
     #hit-arm { right: 3%; bottom: calc(28% + 95px); width: 50px; height: 50px; }
     #hit-legs { right: 10%; bottom: 28%; width: 80px; height: 75px; }
-
-    /* Hitboxes sobem quando inimigo ajoelha */
     body.enemy-kneeling #hit-head { bottom: calc(28% + 97px); }
     body.enemy-kneeling #hit-body { bottom: calc(28% + 45px); height: 55px; }
     body.enemy-kneeling #hit-arm { bottom: calc(28% + 55px); }
@@ -239,9 +218,9 @@
     }
 
     #message {
-      position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
+      position: absolute; top: 11%; left: 50%; transform: translateX(-50%);
       font-family: 'Press Start 2P', monospace;
-      font-size: 18px; color: #FFF8DC;
+      font-size: 17px; color: #FFF8DC;
       text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 4px 4px 12px rgba(0,0,0,0.9);
       text-align: center; z-index: 40; pointer-events: none;
       min-width: 340px; line-height: 1.55; transition: all 0.15s;
@@ -256,10 +235,23 @@
       60% { transform: translateX(-50%) scale(1.15); }
       100% { transform: translateX(-50%) scale(1); opacity: 1; }
     }
-    #message.win { color: #32CD32; font-size: 16px; }
-    #message.lose { color: #DC143C; font-size: 16px; }
-    #message.info { color: #FFD700; font-size: 14px; }
-    #message.hit-info { color: #FFA500; font-size: 14px; }
+    #message.win { color: #32CD32; font-size: 15px; }
+    #message.lose { color: #DC143C; font-size: 15px; }
+    #message.info { color: #FFD700; font-size: 13px; }
+    #message.hit-info { color: #FFA500; font-size: 13px; }
+    #message.false-start {
+      color: #FF6600; font-size: 16px;
+      animation: false-shake 0.4s;
+    }
+    @keyframes false-shake {
+      0%, 100% { transform: translateX(-50%); }
+      25% { transform: translateX(calc(-50% - 12px)); }
+      75% { transform: translateX(calc(-50% + 12px)); }
+    }
+    #message.wave {
+      color: #DA70D6; font-size: 20px;
+      text-shadow: 0 0 20px #BA55D3, 3px 3px 0 #000;
+    }
 
     .hp-bar-container {
       position: absolute; z-index: 45;
@@ -284,8 +276,8 @@
       position: absolute; top: 12px; left: 12px;
       background: linear-gradient(135deg, rgba(20,12,5,0.9), rgba(40,25,10,0.85));
       border: 2px solid #8B6914; border-radius: 10px;
-      padding: 12px 16px; color: #FFD700; font-size: 12px;
-      z-index: 50; min-width: 195px;
+      padding: 12px 16px; color: #FFD700; font-size: 11px;
+      z-index: 50; min-width: 200px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
     #hud h3 {
@@ -307,17 +299,30 @@
     #diff-badge.livre { background: #1a3a5c; color: #87CEEB; border: 2px solid #4A9EDB; }
     #diff-badge.extreme { background: #4a1a5c; color: #DA70D6; border: 2px solid #BA55D3; }
     #diff-badge.impossible { background: #1a0a0a; color: #FF2222; border: 2px solid #8B0000; animation: pulse-imp 1s infinite; }
+    #diff-badge.waves { background: #2a1a4a; color: #E0B0FF; border: 2px solid #9966CC; animation: pulse-wave 1.2s infinite; }
     @keyframes pulse-imp {
       0%, 100% { box-shadow: 0 0 8px #FF0000; }
       50% { box-shadow: 0 0 20px #FF0000, 0 0 40px rgba(255,0,0,0.5); }
+    }
+    @keyframes pulse-wave {
+      0%, 100% { box-shadow: 0 0 8px #9966CC; }
+      50% { box-shadow: 0 0 18px #BA55D3, 0 0 30px rgba(186,85,211,0.4); }
+    }
+
+    #wave-banner {
+      position: absolute; top: 55px; right: 12px;
+      font-family: 'Press Start 2P', monospace; font-size: 10px;
+      color: #E0B0FF; background: rgba(40,20,60,0.85);
+      border: 2px solid #9966CC; border-radius: 8px;
+      padding: 8px 12px; z-index: 50; display: none;
     }
 
     #instructions {
       position: absolute; bottom: 18px; right: 18px;
       background: linear-gradient(135deg, rgba(20,12,5,0.9), rgba(40,25,10,0.85));
       border: 2px solid #8B6914; border-radius: 10px;
-      padding: 12px 14px; color: #F5DEB3; font-size: 11px;
-      max-width: 270px; z-index: 50; line-height: 1.55;
+      padding: 12px 14px; color: #F5DEB3; font-size: 10px;
+      max-width: 280px; z-index: 50; line-height: 1.55;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
     #instructions h4 { color: #FFD700; margin-bottom: 5px; font-size: 11px; }
@@ -355,7 +360,6 @@
       box-shadow: 0 0 6px #FF4500;
     }
     #crosshair.armed .dot { background: #32CD32; box-shadow: 0 0 8px #32CD32; }
-
     #zone-label {
       position: fixed; pointer-events: none; z-index: 101;
       font-family: 'Press Start 2P', monospace; font-size: 9px;
@@ -368,44 +372,45 @@
       position: absolute; inset: 0;
       background: radial-gradient(ellipse at center, rgba(40,25,10,0.93) 0%, rgba(10,6,2,0.98) 100%);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 60; color: #FFD700; overflow-y: auto; padding: 20px;
+      z-index: 60; color: #FFD700; overflow-y: auto; padding: 16px;
     }
     #overlay h1 {
-      font-family: 'Press Start 2P', monospace; font-size: 22px; margin-bottom: 8px;
+      font-family: 'Press Start 2P', monospace; font-size: 20px; margin-bottom: 6px;
       text-shadow: 4px 4px 0 #000, 0 0 30px rgba(255,215,0,0.4);
     }
-    #overlay .subtitle { font-size: 12px; color: #D2B48C; margin-bottom: 12px; }
+    #overlay .subtitle { font-size: 11px; color: #D2B48C; margin-bottom: 10px; }
     #overlay .desc {
-      font-size: 11px; color: #C4A484; max-width: 580px;
-      text-align: center; line-height: 1.65; margin-bottom: 2px;
+      font-size: 10px; color: #C4A484; max-width: 600px;
+      text-align: center; line-height: 1.6; margin-bottom: 2px;
     }
-
     .diff-select {
-      display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 8px;
-      justify-content: center; max-width: 720px;
+      display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 6px;
+      justify-content: center; max-width: 760px;
     }
     .diff-btn {
-      padding: 10px 14px; font-family: 'Press Start 2P', monospace; font-size: 9px;
+      padding: 9px 12px; font-family: 'Press Start 2P', monospace; font-size: 8px;
       border-radius: 10px; cursor: pointer; transition: all 0.2s;
-      border: 3px solid; min-width: 110px; text-align: center;
+      border: 3px solid; min-width: 100px; text-align: center;
     }
-    .diff-btn .diff-name { display: block; margin-bottom: 4px; font-size: 10px; }
-    .diff-btn .diff-info { font-size: 7px; opacity: 0.85; line-height: 1.45; font-family: 'Roboto Mono', monospace; }
+    .diff-btn .diff-name { display: block; margin-bottom: 3px; font-size: 9px; }
+    .diff-btn .diff-info { font-size: 6px; opacity: 0.85; line-height: 1.4; font-family: 'Roboto Mono', monospace; }
     .diff-btn.easy { background: linear-gradient(to bottom, #2a6a2a, #1a4a1a); color: #90EE90; border-color: #32CD32; }
-    .diff-btn.easy:hover, .diff-btn.easy.selected { background: linear-gradient(to bottom, #3a8a3a, #2a6a2a); box-shadow: 0 0 20px rgba(50,205,50,0.5); transform: scale(1.05); }
+    .diff-btn.easy:hover, .diff-btn.easy.selected { background: linear-gradient(to bottom, #3a8a3a, #2a6a2a); box-shadow: 0 0 18px rgba(50,205,50,0.5); transform: scale(1.05); }
     .diff-btn.medium { background: linear-gradient(to bottom, #6a5a1a, #4a3a0a); color: #FFD700; border-color: #DAA520; }
-    .diff-btn.medium:hover, .diff-btn.medium.selected { background: linear-gradient(to bottom, #8a7a2a, #6a5a1a); box-shadow: 0 0 20px rgba(255,215,0,0.5); transform: scale(1.05); }
+    .diff-btn.medium:hover, .diff-btn.medium.selected { background: linear-gradient(to bottom, #8a7a2a, #6a5a1a); box-shadow: 0 0 18px rgba(255,215,0,0.5); transform: scale(1.05); }
     .diff-btn.hard { background: linear-gradient(to bottom, #6a1a1a, #4a0a0a); color: #FF6B6B; border-color: #DC143C; }
-    .diff-btn.hard:hover, .diff-btn.hard.selected { background: linear-gradient(to bottom, #8a2a2a, #6a1a1a); box-shadow: 0 0 20px rgba(220,20,60,0.5); transform: scale(1.05); }
+    .diff-btn.hard:hover, .diff-btn.hard.selected { background: linear-gradient(to bottom, #8a2a2a, #6a1a1a); box-shadow: 0 0 18px rgba(220,20,60,0.5); transform: scale(1.05); }
     .diff-btn.livre { background: linear-gradient(to bottom, #1a4a6a, #0a2a4a); color: #87CEEB; border-color: #4A9EDB; }
-    .diff-btn.livre:hover, .diff-btn.livre.selected { background: linear-gradient(to bottom, #2a6a8a, #1a4a6a); box-shadow: 0 0 20px rgba(74,158,219,0.5); transform: scale(1.05); }
+    .diff-btn.livre:hover, .diff-btn.livre.selected { background: linear-gradient(to bottom, #2a6a8a, #1a4a6a); box-shadow: 0 0 18px rgba(74,158,219,0.5); transform: scale(1.05); }
     .diff-btn.extreme { background: linear-gradient(to bottom, #5a1a6a, #3a0a4a); color: #DA70D6; border-color: #BA55D3; }
-    .diff-btn.extreme:hover, .diff-btn.extreme.selected { background: linear-gradient(to bottom, #7a2a8a, #5a1a6a); box-shadow: 0 0 20px rgba(186,85,211,0.5); transform: scale(1.05); }
+    .diff-btn.extreme:hover, .diff-btn.extreme.selected { background: linear-gradient(to bottom, #7a2a8a, #5a1a6a); box-shadow: 0 0 18px rgba(186,85,211,0.5); transform: scale(1.05); }
     .diff-btn.impossible { background: linear-gradient(to bottom, #3a0a0a, #1a0000); color: #FF4444; border-color: #8B0000; }
-    .diff-btn.impossible:hover, .diff-btn.impossible.selected { background: linear-gradient(to bottom, #5a1a1a, #3a0a0a); box-shadow: 0 0 25px rgba(255,0,0,0.6); transform: scale(1.05); }
+    .diff-btn.impossible:hover, .diff-btn.impossible.selected { background: linear-gradient(to bottom, #5a1a1a, #3a0a0a); box-shadow: 0 0 22px rgba(255,0,0,0.6); transform: scale(1.05); }
+    .diff-btn.waves { background: linear-gradient(to bottom, #3a2a5a, #1a0a3a); color: #E0B0FF; border-color: #9966CC; }
+    .diff-btn.waves:hover, .diff-btn.waves.selected { background: linear-gradient(to bottom, #5a4a7a, #3a2a5a); box-shadow: 0 0 22px rgba(153,102,204,0.55); transform: scale(1.05); }
 
     #start-btn {
-      margin-top: 14px; padding: 12px 36px; font-size: 12px;
+      margin-top: 12px; padding: 11px 32px; font-size: 11px;
       font-family: 'Press Start 2P', monospace;
       background: linear-gradient(to bottom, #8B4513, #5D3A1A);
       color: #FFD700; border: 3px solid #FFD700; border-radius: 10px;
@@ -413,6 +418,15 @@
     }
     #start-btn:hover { background: linear-gradient(to bottom, #A0522D, #8B4513); transform: scale(1.05); box-shadow: 0 0 30px rgba(255,215,0,0.5); }
     #start-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    #mute-btn {
+      position: absolute; top: 12px; right: 160px;
+      z-index: 50; background: rgba(0,0,0,0.7);
+      border: 2px solid #8B6914; border-radius: 8px;
+      color: #FFD700; padding: 6px 10px; font-size: 14px;
+      cursor: pointer; font-family: inherit;
+    }
+    #mute-btn:hover { background: rgba(40,25,10,0.9); }
 
     .hidden { display: none !important; }
     .particle { position: absolute; border-radius: 50%; pointer-events: none; z-index: 22; }
@@ -425,7 +439,6 @@
     .shadow-enemy { right: 10%; }
     body.player-kneeling .shadow-player { bottom: 26%; width: 95px; }
     body.enemy-kneeling .shadow-enemy { bottom: 26%; width: 95px; }
-
     #game-container::after {
       content: ''; position: absolute; inset: 0;
       background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.35) 100%);
@@ -442,11 +455,9 @@
     <div class="mountains-far"></div>
     <div class="mountains-near"></div>
     <div class="ground"></div>
-
     <div class="cactus cactus1"><div class="cactus-body"><div class="cactus-arm arm-l"></div><div class="cactus-arm arm-r"></div></div></div>
     <div class="cactus cactus2"><div class="cactus-body"><div class="cactus-arm arm-l"></div></div></div>
     <div class="cactus cactus3"><div class="cactus-body"><div class="cactus-arm arm-r"></div></div></div>
-
     <div class="char-shadow shadow-player"></div>
     <div class="char-shadow shadow-enemy"></div>
     <div class="knee-pad" id="player-knee-l"></div>
@@ -463,7 +474,6 @@
       <div class="hp-fill" id="enemy-hp-fill"></div>
     </div>
 
-    <!-- JOGADOR -->
     <div id="player">
       <div class="char-upper">
         <svg viewBox="0 0 110 200" width="110" height="200">
@@ -505,7 +515,6 @@
       </div>
     </div>
 
-    <!-- INIMIGO -->
     <div id="enemy">
       <div class="char-upper">
         <svg viewBox="0 0 110 200" width="110" height="200">
@@ -560,12 +569,10 @@
     <div class="hitbox" id="hit-body" data-zone="body"></div>
     <div class="hitbox" id="hit-arm" data-zone="arm"></div>
     <div class="hitbox" id="hit-legs" data-zone="legs"></div>
-
     <div class="zone-hint" id="hint-head">CABEÇA</div>
     <div class="zone-hint" id="hint-body">CORPO</div>
     <div class="zone-hint" id="hint-arm">BRAÇO</div>
     <div class="zone-hint" id="hint-legs">PERNAS</div>
-
     <div id="enemy-muzzle"></div>
 
     <div id="revolver-ui">
@@ -592,19 +599,22 @@
     <div id="hud">
       <h3>🤠 DUELO</h3>
       <p>Rodada: <span class="val" id="round">1</span></p>
+      <p id="wave-row" class="hidden">Onda: <span class="val" id="wave">1</span></p>
       <p>Tiros: <span class="val" id="hits">0</span></p>
       <p>Headshots: <span class="val" id="headshots">0</span></p>
+      <p>Queimadas: <span class="val" id="false-starts">0</span></p>
       <p>Melhor: <span class="val" id="best">—</span></p>
       <p>Último: <span class="val" id="last">—</span></p>
     </div>
     <div id="diff-badge" class="hidden">FÁCIL</div>
+    <div id="wave-banner">ONDA <span id="wave-banner-num">1</span></div>
+    <button id="mute-btn" title="Som">🔊</button>
     <div id="instructions">
-      <h4>📋 Zonas de acerto</h4>
-      <b style="color:#FF4500">CABEÇA</b> → Morte instantânea<br>
-      <b style="color:#FFA500">BRAÇO</b> → Segura o braço com dor<br>
-      <b style="color:#87CEEB">PERNAS</b> → Ajoelha de verdade<br>
-      <b>CORPO</b> → Dano normal<br>
-      Vários tiros matam de qualquer forma!
+      <h4>📋 Regras</h4>
+      <b style="color:#FF4500">CABEÇA</b> → Kill · <b style="color:#87CEEB">PERNAS</b> → Ajoelha<br>
+      <b style="color:#FFA500">BRAÇO</b> → Dor · <b>CORPO</b> → Dano<br>
+      <b style="color:#FF6600">Queimar largada</b> = dano em você!<br>
+      <b style="color:#E0B0FF">ONDAS</b> = dificuldade sobe a cada vitória
     </div>
     <div id="crosshair"><div class="dot"></div></div>
     <div id="zone-label"></div>
@@ -612,84 +622,224 @@
 
   <div id="overlay">
     <h1>🤠 DUELO DE FAROESTE</h1>
-    <p class="subtitle">Mire nas zonas certas para vencer</p>
+    <p class="subtitle">Mire nas zonas · Não queime a largada</p>
     <p class="desc">
-      Mantenha o mouse no <b>tambor</b>. No <b style="color:#FF4500">DRAW!</b>, arraste até uma zona.<br>
-      <b style="color:#FF4500">Cabeça</b> = kill · <b style="color:#87CEEB">Pernas</b> = ajoelha · <b style="color:#FFA500">Braço</b> = dor
+      Mouse no <b>tambor</b> → espere <b style="color:#FF4500">DRAW!</b> → atire na zona.<br>
+      Sair do tambor ou atirar antes do sinal = <b style="color:#FF6600">queimada</b> (você leva dano).
     </p>
-    <p class="desc" style="font-size:10px; color:#888; margin-bottom: 8px;">
-      <b style="color:#87CEEB">LIVRE</b> = sem limite de tempo após o DRAW · <b style="color:#FF4444">IMPOSSÍVEL</b> ≈ quase impossível
+    <p class="desc" style="font-size:9px; color:#888; margin-bottom:6px;">
+      <b style="color:#E0B0FF">ONDAS</b>: sobreviva o máximo de ondas · dificuldade sobe sempre
     </p>
     <div class="diff-select">
       <button class="diff-btn easy" data-diff="easy">
         <span class="diff-name">FÁCIL</span>
-        <span class="diff-info">Vida 4 · 1.3s<br>Inimigo lento</span>
+        <span class="diff-info">Vida 4 · 1.3s</span>
       </button>
       <button class="diff-btn medium" data-diff="medium">
         <span class="diff-name">MÉDIO</span>
-        <span class="diff-info">Vida 3 · 0.95s<br>Equilibrado</span>
+        <span class="diff-info">Vida 3 · 0.95s</span>
       </button>
       <button class="diff-btn hard" data-diff="hard">
         <span class="diff-name">DIFÍCIL</span>
-        <span class="diff-info">Vida 3 · 0.65s<br>Rápido</span>
+        <span class="diff-info">Vida 3 · 0.65s</span>
       </button>
       <button class="diff-btn livre" data-diff="livre">
         <span class="diff-name">LIVRE</span>
-        <span class="diff-info">Sem cooldown<br>Mire com calma</span>
+        <span class="diff-info">Sem limite de tempo</span>
       </button>
       <button class="diff-btn extreme" data-diff="extreme">
         <span class="diff-name">EXTREMO</span>
-        <span class="diff-info">Vida 4 · 0.38s<br>Muito rápido</span>
+        <span class="diff-info">Vida 4 · 0.38s</span>
       </button>
       <button class="diff-btn impossible" data-diff="impossible">
         <span class="diff-name">IMPOSSÍVEL</span>
-        <span class="diff-info">Vida 5 · 0.20s<br>Quase impossível</span>
+        <span class="diff-info">Vida 5 · 0.20s</span>
+      </button>
+      <button class="diff-btn waves" data-diff="waves">
+        <span class="diff-name">🌊 ONDAS</span>
+        <span class="diff-info">Infinito · sobe a cada vitória</span>
       </button>
     </div>
     <button id="start-btn" disabled>SELECIONE O MODO</button>
   </div>
 
   <script>
+    // ========== ÁUDIO (Web Audio API) ==========
+    let audioCtx = null;
+    let muted = false;
+
+    function ensureAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playTone(freq, duration, type, vol, slideTo) {
+      if (muted) return;
+      const ctx = ensureAudio();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type || 'square';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, ctx.currentTime + duration);
+      gain.gain.setValueAtTime(vol || 0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + duration);
+    }
+
+    function playNoise(duration, vol, filterFreq) {
+      if (muted) return;
+      const ctx = ensureAudio();
+      const bufferSize = ctx.sampleRate * duration;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource();
+      src.buffer = buffer;
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = filterFreq || 800;
+      filter.Q.value = 0.8;
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(vol || 0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+      src.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      src.start();
+    }
+
+    const SFX = {
+      gunshot() {
+        playNoise(0.12, 0.35, 1200);
+        playTone(120, 0.08, 'sawtooth', 0.12, 40);
+        setTimeout(() => playNoise(0.06, 0.12, 600), 40);
+      },
+      headshot() {
+        playNoise(0.1, 0.4, 2000);
+        playTone(800, 0.05, 'square', 0.1);
+        playTone(200, 0.15, 'sawtooth', 0.15, 60);
+        setTimeout(() => playTone(1200, 0.08, 'sine', 0.08), 50);
+      },
+      bodyHit() {
+        playNoise(0.1, 0.28, 700);
+        playTone(90, 0.12, 'triangle', 0.12, 50);
+      },
+      legHit() {
+        playNoise(0.14, 0.25, 400);
+        playTone(60, 0.18, 'triangle', 0.14, 30);
+        setTimeout(() => playTone(45, 0.1, 'sine', 0.08), 80);
+      },
+      armHit() {
+        playNoise(0.09, 0.22, 900);
+        playTone(150, 0.1, 'square', 0.08, 80);
+      },
+      falseStart() {
+        playTone(220, 0.15, 'sawtooth', 0.2);
+        setTimeout(() => playTone(180, 0.2, 'sawtooth', 0.18), 100);
+        setTimeout(() => playTone(140, 0.25, 'square', 0.15), 220);
+      },
+      victory() {
+        const notes = [523, 659, 784, 1047];
+        notes.forEach((n, i) => setTimeout(() => playTone(n, 0.2, 'square', 0.12), i * 120));
+        setTimeout(() => playTone(1047, 0.4, 'sine', 0.1), 500);
+      },
+      defeat() {
+        playTone(400, 0.2, 'sawtooth', 0.15, 200);
+        setTimeout(() => playTone(250, 0.25, 'sawtooth', 0.12, 100), 200);
+        setTimeout(() => playTone(100, 0.4, 'triangle', 0.12), 400);
+      },
+      draw() {
+        playTone(600, 0.08, 'square', 0.15);
+        setTimeout(() => playTone(900, 0.1, 'square', 0.12), 60);
+      },
+      waveUp() {
+        [440, 554, 659, 880].forEach((n, i) => setTimeout(() => playTone(n, 0.12, 'sine', 0.1), i * 90));
+      },
+      enemyShot() {
+        playNoise(0.1, 0.3, 1000);
+        playTone(100, 0.1, 'sawtooth', 0.1, 35);
+      }
+    };
+
+    document.getElementById('mute-btn').addEventListener('click', () => {
+      muted = !muted;
+      document.getElementById('mute-btn').textContent = muted ? '🔇' : '🔊';
+      ensureAudio();
+    });
+
+    // ========== DIFICULDADES ==========
     const DIFFICULTY = {
       easy: {
         label: 'FÁCIL', className: 'easy',
         maxReaction: 1300, minDelay: 2000, maxDelay: 5000,
-        maxHP: 4, killShots: 4, noTimeout: false
+        maxHP: 4, killShots: 4, noTimeout: false, waves: false
       },
       medium: {
         label: 'MÉDIO', className: 'medium',
         maxReaction: 950, minDelay: 1500, maxDelay: 4500,
-        maxHP: 3, killShots: 3, noTimeout: false
+        maxHP: 3, killShots: 3, noTimeout: false, waves: false
       },
       hard: {
         label: 'DIFÍCIL', className: 'hard',
         maxReaction: 650, minDelay: 1000, maxDelay: 5000,
-        maxHP: 3, killShots: 3, noTimeout: false
+        maxHP: 3, killShots: 3, noTimeout: false, waves: false
       },
       livre: {
         label: 'LIVRE', className: 'livre',
         maxReaction: null, minDelay: 1500, maxDelay: 4000,
-        maxHP: 3, killShots: 3, noTimeout: true
+        maxHP: 3, killShots: 3, noTimeout: true, waves: false
       },
       extreme: {
         label: 'EXTREMO', className: 'extreme',
         maxReaction: 380, minDelay: 800, maxDelay: 4500,
-        maxHP: 4, killShots: 4, noTimeout: false
+        maxHP: 4, killShots: 4, noTimeout: false, waves: false
       },
       impossible: {
         label: 'IMPOSSÍVEL', className: 'impossible',
         maxReaction: 200, minDelay: 1500, maxDelay: 7000,
-        maxHP: 5, killShots: 5, noTimeout: false
+        maxHP: 5, killShots: 5, noTimeout: false, waves: false
+      },
+      waves: {
+        label: 'ONDAS', className: 'waves',
+        maxReaction: 1100, minDelay: 1800, maxDelay: 4500,
+        maxHP: 3, killShots: 3, noTimeout: false, waves: true
       }
     };
+
+    // Escala de dificuldade por onda
+    function getWaveConfig(wave) {
+      const base = DIFFICULTY.waves;
+      // Cada onda: reação mais curta, inimigo mais tanky, delays mais imprevisíveis
+      const reaction = Math.max(180, base.maxReaction - (wave - 1) * 70);
+      const hp = Math.min(8, base.maxHP + Math.floor((wave - 1) / 2));
+      const kills = Math.min(8, base.killShots + Math.floor((wave - 1) / 2));
+      const minD = Math.max(600, base.minDelay - (wave - 1) * 80);
+      const maxD = Math.min(8000, base.maxDelay + (wave - 1) * 200);
+      return {
+        maxReaction: reaction,
+        minDelay: minD,
+        maxDelay: maxD,
+        maxHP: hp,
+        killShots: kills,
+        noTimeout: false
+      };
+    }
 
     const state = {
       phase: 'idle',
       mouseOnCylinder: false,
       reactionStart: 0,
       round: 1,
+      wave: 1,
       hits: 0,
       headshots: 0,
+      falseStarts: 0,
       bestTime: null,
       lastTime: null,
       waitTimeout: null,
@@ -698,13 +848,18 @@
       playerHP: 3,
       enemyHP: 3,
       maxHP: 3,
+      playerMaxHP: 3,
       killShots: 3,
       enemyShotsTaken: 0,
       enemyKneeling: false,
       playerKneeling: false,
       enemyArmHurt: false,
       canShoot: false,
-      noTimeout: false
+      noTimeout: false,
+      isWaves: false,
+      currentMaxReaction: 1000,
+      currentMinDelay: 1500,
+      currentMaxDelay: 4500
     };
 
     const cylinder = document.getElementById('cylinder');
@@ -722,6 +877,7 @@
     const playerHpFill = document.getElementById('player-hp-fill');
     const enemyHpFill = document.getElementById('enemy-hp-fill');
     const armHurtVis = document.getElementById('arm-hurt-vis');
+    const waveBanner = document.getElementById('wave-banner');
 
     const hitboxes = {
       head: document.getElementById('hit-head'),
@@ -743,6 +899,10 @@
       zoneLabel.style.top = e.clientY + 'px';
     });
 
+    // Unlock audio on first interaction
+    document.addEventListener('click', () => ensureAudio(), { once: true });
+    document.addEventListener('mousemove', () => ensureAudio(), { once: true });
+
     document.querySelectorAll('.diff-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
@@ -750,6 +910,7 @@
         state.selectedDiff = btn.dataset.diff;
         startBtn.disabled = false;
         startBtn.textContent = 'COMEÇAR DUELO';
+        ensureAudio();
       });
     });
 
@@ -762,17 +923,18 @@
         player.classList.add('ready');
       }
     });
+
     cylinder.addEventListener('mouseleave', () => {
       state.mouseOnCylinder = false;
       crosshair.classList.remove('armed');
       cylinder.classList.remove('ready');
       revolverUI.classList.remove('armed');
       player.classList.remove('ready');
+
+      // QUEIMAR LARGADA: sair do tambor durante a espera
       if (state.phase === 'waiting') {
         clearTimeout(state.waitTimeout);
-        message.textContent = 'Mantenha no tambor!';
-        message.className = 'lose';
-        setTimeout(() => { if (state.phase === 'waiting' || state.phase === 'idle') startWaiting(); }, 1000);
+        penalizeFalseStart('Saiu do tambor antes do DRAW!');
       }
     });
 
@@ -782,11 +944,54 @@
           zoneLabel.textContent = ({ head: '🎯 CABEÇA', body: '💥 CORPO', arm: '😣 BRAÇO', legs: '🦵 PERNAS' })[zone];
           zoneLabel.classList.add('show');
         }
+        // Atirar antes do DRAW = queimada
+        if (state.phase === 'waiting') {
+          clearTimeout(state.waitTimeout);
+          penalizeFalseStart('Atirou antes do sinal!');
+        }
       });
       el.addEventListener('mouseleave', () => zoneLabel.classList.remove('show'));
       el.addEventListener('mouseenter', () => tryShoot(zone));
-      el.addEventListener('mousedown', () => tryShoot(zone));
+      el.addEventListener('mousedown', () => {
+        if (state.phase === 'waiting') {
+          clearTimeout(state.waitTimeout);
+          penalizeFalseStart('Atirou antes do sinal!');
+          return;
+        }
+        tryShoot(zone);
+      });
     });
+
+    function penalizeFalseStart(reason) {
+      if (state.phase === 'result' || state.phase === 'idle') return;
+      state.phase = 'result';
+      state.canShoot = false;
+      state.falseStarts++;
+      state.playerHP = Math.max(0, state.playerHP - 1);
+      SFX.falseStart();
+      player.classList.add('hurt');
+      updateHPBars();
+      updateHUD();
+      showZoneHints(false);
+      message.className = 'false-start';
+      message.textContent = '🚫 QUEIMADA! ' + reason + ' (-1 vida)';
+
+      setTimeout(() => player.classList.remove('hurt'), 350);
+
+      if (state.playerHP <= 0) {
+        player.classList.add('dead');
+        setTimeout(() => {
+          SFX.defeat();
+          endGame(false);
+        }, 1200);
+      } else {
+        setTimeout(() => {
+          state.round++;
+          updateHUD();
+          startWaiting();
+        }, 1600);
+      }
+    }
 
     function tryShoot(zone) {
       if (state.phase !== 'draw' || !state.canShoot || state.enemyHP <= 0) return;
@@ -795,7 +1000,8 @@
     }
 
     function updateHPBars() {
-      const pPct = Math.max(0, (state.playerHP / state.maxHP) * 100);
+      const pMax = state.playerMaxHP || state.maxHP;
+      const pPct = Math.max(0, (state.playerHP / pMax) * 100);
       const ePct = Math.max(0, (state.enemyHP / state.maxHP) * 100);
       playerHpFill.style.width = pPct + '%';
       enemyHpFill.style.width = ePct + '%';
@@ -838,14 +1044,39 @@
       applyKneelBodyClass();
     }
 
+    function applyWaveStats() {
+      if (!state.isWaves) return;
+      const cfg = getWaveConfig(state.wave);
+      state.currentMaxReaction = cfg.maxReaction;
+      state.currentMinDelay = cfg.minDelay;
+      state.currentMaxDelay = cfg.maxDelay;
+      state.maxHP = cfg.maxHP;
+      state.killShots = cfg.killShots;
+      state.enemyHP = cfg.maxHP;
+      state.enemyShotsTaken = 0;
+      state.enemyKneeling = false;
+      state.enemyArmHurt = false;
+      // Jogador mantém vida entre ondas (não regenera full), mas max permanece
+      updateHPBars();
+      document.getElementById('wave').textContent = state.wave;
+      document.getElementById('wave-banner-num').textContent = state.wave;
+      waveBanner.style.display = 'block';
+    }
+
     function startWaiting() {
-      if (state.playerHP <= 0 || state.enemyHP <= 0) return;
+      if (state.playerHP <= 0) return;
+      if (!state.isWaves && state.enemyHP <= 0) return;
+
       state.phase = 'waiting';
       state.canShoot = false;
       message.className = 'info';
-      message.textContent = state.noTimeout
-        ? 'Mantenha no tambor... (modo LIVRE: sem limite)'
-        : 'Mantenha o mouse no tambor...';
+      if (state.isWaves) {
+        message.textContent = 'Onda ' + state.wave + ' · Mantenha no tambor...';
+      } else if (state.noTimeout) {
+        message.textContent = 'Mantenha no tambor... (LIVRE: sem limite)';
+      } else {
+        message.textContent = 'Mantenha o mouse no tambor...';
+      }
       applyPlayerVisuals();
       applyEnemyVisuals();
       cylinder.classList.toggle('ready', state.mouseOnCylinder);
@@ -853,14 +1084,17 @@
       crosshair.classList.toggle('armed', state.mouseOnCylinder);
       showZoneHints(false);
 
-      const cfg = DIFFICULTY[state.difficulty];
-      const delay = cfg.minDelay + Math.random() * (cfg.maxDelay - cfg.minDelay);
+      const minD = state.isWaves ? state.currentMinDelay : DIFFICULTY[state.difficulty].minDelay;
+      const maxD = state.isWaves ? state.currentMaxDelay : DIFFICULTY[state.difficulty].maxDelay;
+      const delay = minD + Math.random() * (maxD - minD);
+
       state.waitTimeout = setTimeout(() => {
         if (state.phase === 'waiting' && state.mouseOnCylinder) triggerDraw();
         else if (state.phase === 'waiting') {
+          // Ainda sem mouse — aviso, não é queimada ainda
           message.textContent = 'Coloque o mouse no tambor!';
           message.className = 'lose';
-          setTimeout(startWaiting, 1200);
+          setTimeout(startWaiting, 1100);
         }
       }, delay);
     }
@@ -871,6 +1105,7 @@
       state.reactionStart = performance.now();
       message.textContent = 'DRAW!';
       message.className = 'draw';
+      SFX.draw();
       showZoneHints(true);
       document.getElementById('game-container').style.filter = 'brightness(1.08) saturate(1.15)';
       if (state.noTimeout) {
@@ -890,6 +1125,7 @@
       state.hits++;
       state.enemyShotsTaken++;
 
+      SFX.gunshot();
       muzzleFlash.classList.add('active');
       revolverUI.classList.add('shooting');
       player.classList.add('shooting');
@@ -912,20 +1148,22 @@
         state.enemyHP = 0;
         state.headshots++;
         killed = true;
+        setTimeout(() => SFX.headshot(), 30);
         msg = '🎯 HEADSHOT! ' + reactionTime.toFixed(0) + ' ms';
       } else {
         state.enemyHP = Math.max(0, state.enemyHP - 1);
-
         if (zone === 'legs') {
           state.enemyKneeling = true;
+          setTimeout(() => SFX.legHit(), 30);
           msg = '🦵 Pernas! Ajoelhou · ' + reactionTime.toFixed(0) + ' ms';
         } else if (zone === 'arm') {
           state.enemyArmHurt = true;
+          setTimeout(() => SFX.armHit(), 30);
           msg = '😣 Braço ferido! · ' + reactionTime.toFixed(0) + ' ms';
         } else {
+          setTimeout(() => SFX.bodyHit(), 30);
           msg = '💥 Corpo! · ' + reactionTime.toFixed(0) + ' ms';
         }
-
         if (state.enemyShotsTaken >= state.killShots || state.enemyHP <= 0) {
           state.enemyHP = 0;
           killed = true;
@@ -945,23 +1183,45 @@
         enemy.classList.add('dead');
         message.className = 'win';
         message.innerHTML = msg;
-        setTimeout(() => endGame(true), 2200);
+        if (state.isWaves) {
+          setTimeout(() => advanceWave(), 1800);
+        } else {
+          setTimeout(() => { SFX.victory(); endGame(true); }, 2000);
+        }
       } else {
         state.phase = 'result';
         message.className = 'hit-info';
         message.innerHTML = msg;
-        // No modo livre o inimigo também contra-ataca após você atirar
         setTimeout(() => {
           if (state.enemyHP > 0 && state.playerHP > 0) enemyShoot();
         }, 900);
       }
     }
 
+    function advanceWave() {
+      state.wave++;
+      state.round = 1;
+      SFX.waveUp();
+      message.className = 'wave';
+      message.textContent = '🌊 ONDA ' + state.wave + '!';
+      // Pequena cura a cada 3 ondas
+      if (state.wave % 3 === 1 && state.wave > 1) {
+        state.playerHP = Math.min(state.playerMaxHP, state.playerHP + 1);
+      }
+      applyWaveStats();
+      applyEnemyVisuals();
+      enemy.className = state.enemyKneeling ? 'kneeling' : '';
+      setTimeout(() => {
+        updateHUD();
+        startWaiting();
+      }, 1600);
+    }
+
     function enemyShoot() {
       if (state.playerHP <= 0) return;
       state.phase = 'result';
+      SFX.enemyShot();
 
-      // Zona aleatória do tiro do inimigo (corpo/braço/pernas/raramente cabeça)
       const roll = Math.random();
       let zone = 'body';
       if (roll < 0.08) zone = 'head';
@@ -977,16 +1237,20 @@
       let msg = '';
       if (zone === 'head') {
         state.playerHP = 0;
+        SFX.headshot();
         msg = '💀 HEADSHOT do inimigo!';
       } else {
         state.playerHP = Math.max(0, state.playerHP - 1);
         if (zone === 'legs') {
           state.playerKneeling = true;
-          msg = '🦵 Tiro nas pernas! Você ajoelhou · Vida: ' + state.playerHP + '/' + state.maxHP;
+          SFX.legHit();
+          msg = '🦵 Tiro nas pernas! Você ajoelhou · Vida: ' + state.playerHP + '/' + state.playerMaxHP;
         } else if (zone === 'arm') {
-          msg = '😣 Tiro no braço! · Vida: ' + state.playerHP + '/' + state.maxHP;
+          SFX.armHit();
+          msg = '😣 Tiro no braço! · Vida: ' + state.playerHP + '/' + state.playerMaxHP;
         } else {
-          msg = '💥 Você levou um tiro! · Vida: ' + state.playerHP + '/' + state.maxHP;
+          SFX.bodyHit();
+          msg = '💥 Você levou um tiro! · Vida: ' + state.playerHP + '/' + state.playerMaxHP;
         }
       }
 
@@ -1003,7 +1267,7 @@
         player.classList.add('dead');
         message.className = 'lose';
         message.textContent = msg || '💀 Você foi abatido!';
-        setTimeout(() => endGame(false), 2000);
+        setTimeout(() => { SFX.defeat(); endGame(false); }, 1800);
       } else {
         message.className = 'lose';
         message.textContent = msg;
@@ -1011,7 +1275,7 @@
           state.round++;
           updateHUD();
           startWaiting();
-        }, 1600);
+        }, 1500);
       }
     }
 
@@ -1020,10 +1284,14 @@
       showZoneHints(false);
       if (playerWon) {
         message.className = 'win';
-        message.innerHTML = '🏆 VITÓRIA!<br><span style="font-size:12px">Headshots: ' + state.headshots + ' · Tiros: ' + state.hits + '</span>';
+        message.innerHTML = '🏆 VITÓRIA!<br><span style="font-size:11px">HS: ' + state.headshots + ' · Tiros: ' + state.hits + '</span>';
       } else {
         message.className = 'lose';
-        message.innerHTML = '☠️ DERROTA<br><span style="font-size:12px">Tente novamente!</span>';
+        if (state.isWaves) {
+          message.innerHTML = '☠️ FIM · Onda ' + state.wave + '<br><span style="font-size:11px">HS: ' + state.headshots + ' · Tiros: ' + state.hits + '</span>';
+        } else {
+          message.innerHTML = '☠️ DERROTA<br><span style="font-size:11px">Tente de novo!</span>';
+        }
       }
       setTimeout(() => {
         overlay.classList.remove('hidden');
@@ -1033,13 +1301,15 @@
           b.classList.toggle('selected', b.dataset.diff === state.difficulty);
         });
         state.selectedDiff = state.difficulty;
-      }, 1800);
+      }, 1600);
     }
 
     function checkTimeout() {
       if (state.phase === 'draw' && state.canShoot && !state.noTimeout) {
         const elapsed = performance.now() - state.reactionStart;
-        const maxTime = DIFFICULTY[state.difficulty].maxReaction;
+        let maxTime = state.isWaves
+          ? state.currentMaxReaction
+          : DIFFICULTY[state.difficulty].maxReaction;
         const bonus = state.enemyKneeling ? 280 : 0;
         if (maxTime != null && elapsed > maxTime + bonus) {
           state.canShoot = false;
@@ -1051,7 +1321,7 @@
     }
 
     function spawnParticles(x, y, color) {
-      for (let i = 0; i < 14; i++) {
+      for (let i = 0; i < 12; i++) {
         const p = document.createElement('div');
         p.className = 'particle';
         p.style.left = x + 'px';
@@ -1082,12 +1352,20 @@
       document.getElementById('round').textContent = state.round;
       document.getElementById('hits').textContent = state.hits;
       document.getElementById('headshots').textContent = state.headshots;
+      document.getElementById('false-starts').textContent = state.falseStarts;
       document.getElementById('best').textContent = state.bestTime ? state.bestTime.toFixed(0) + ' ms' : '—';
       document.getElementById('last').textContent = state.lastTime ? state.lastTime.toFixed(0) + ' ms' : '—';
+      if (state.isWaves) {
+        document.getElementById('wave').textContent = state.wave;
+        document.getElementById('wave-row').classList.remove('hidden');
+      } else {
+        document.getElementById('wave-row').classList.add('hidden');
+      }
     }
 
     startBtn.addEventListener('click', () => {
       if (!state.selectedDiff) return;
+      ensureAudio();
       state.difficulty = state.selectedDiff;
       const cfg = DIFFICULTY[state.difficulty];
       overlay.classList.add('hidden');
@@ -1096,20 +1374,31 @@
       diffBadge.classList.remove('hidden');
 
       state.round = 1;
+      state.wave = 1;
       state.hits = 0;
       state.headshots = 0;
+      state.falseStarts = 0;
       state.bestTime = null;
       state.lastTime = null;
-      state.maxHP = cfg.maxHP;
-      state.killShots = cfg.killShots;
+      state.isWaves = !!cfg.waves;
+      state.noTimeout = !!cfg.noTimeout;
+      state.playerMaxHP = cfg.maxHP;
       state.playerHP = cfg.maxHP;
-      state.enemyHP = cfg.maxHP;
-      state.enemyShotsTaken = 0;
+      state.canShoot = false;
       state.enemyKneeling = false;
       state.playerKneeling = false;
       state.enemyArmHurt = false;
-      state.canShoot = false;
-      state.noTimeout = !!cfg.noTimeout;
+
+      if (state.isWaves) {
+        applyWaveStats();
+      } else {
+        state.maxHP = cfg.maxHP;
+        state.killShots = cfg.killShots;
+        state.enemyHP = cfg.maxHP;
+        state.enemyShotsTaken = 0;
+        state.currentMaxReaction = cfg.maxReaction;
+        waveBanner.style.display = 'none';
+      }
 
       player.className = '';
       enemy.className = '';
