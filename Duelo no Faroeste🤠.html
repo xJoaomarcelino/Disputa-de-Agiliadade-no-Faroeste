@@ -419,6 +419,74 @@
     #start-btn:hover { background: linear-gradient(to bottom, #A0522D, #8B4513); transform: scale(1.05); box-shadow: 0 0 30px rgba(255,215,0,0.5); }
     #start-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
 
+    /* ===== MULTIPLAYER UI ===== */
+    .mp-section {
+      margin-top: 14px; padding-top: 12px;
+      border-top: 1px solid #5A4030;
+      width: 100%; max-width: 520px;
+      text-align: center;
+    }
+    .mp-section h3 {
+      font-family: 'Press Start 2P', monospace; font-size: 11px;
+      color: #87CEEB; margin-bottom: 10px;
+    }
+    .mp-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; align-items: center; }
+    .mp-btn {
+      padding: 10px 18px; font-family: 'Press Start 2P', monospace; font-size: 9px;
+      border-radius: 8px; cursor: pointer; border: 2px solid #4A9EDB;
+      background: linear-gradient(to bottom, #1a4a6a, #0a2a4a); color: #87CEEB;
+      transition: all 0.2s;
+    }
+    .mp-btn:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(74,158,219,0.5); }
+    .mp-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    #mp-code-input {
+      width: 100px; padding: 10px; font-family: 'Press Start 2P', monospace;
+      font-size: 12px; text-align: center; letter-spacing: 3px;
+      background: #1a1208; color: #FFD700; border: 2px solid #8B6914;
+      border-radius: 8px; outline: none;
+    }
+    #mp-code-input::placeholder { color: #666; letter-spacing: 1px; font-size: 9px; }
+    #mp-status {
+      margin-top: 8px; font-size: 11px; color: #C4A484; min-height: 18px;
+    }
+    #mp-lobby {
+      display: none; flex-direction: column; align-items: center; gap: 12px;
+      margin-top: 10px;
+    }
+    #mp-lobby.visible { display: flex; }
+    #mp-ready-btn {
+      padding: 12px 28px; font-family: 'Press Start 2P', monospace; font-size: 11px;
+      border-radius: 10px; cursor: pointer; border: 3px solid #32CD32;
+      background: linear-gradient(to bottom, #2a6a2a, #1a4a1a); color: #90EE90;
+    }
+    #mp-ready-btn.ready {
+      border-color: #FFD700; background: linear-gradient(to bottom, #6a5a1a, #4a3a0a); color: #FFD700;
+    }
+    #mp-leave-btn {
+      padding: 8px 16px; font-family: 'Press Start 2P', monospace; font-size: 8px;
+      border-radius: 8px; cursor: pointer; border: 2px solid #DC143C;
+      background: #3a0a0a; color: #FF6B6B;
+    }
+    #room-code-display {
+      position: absolute; bottom: 18px; left: 18px;
+      background: linear-gradient(135deg, rgba(20,12,5,0.92), rgba(40,25,10,0.88));
+      border: 2px solid #4A9EDB; border-radius: 10px;
+      padding: 12px 16px; z-index: 50;
+      font-family: 'Press Start 2P', monospace;
+      color: #87CEEB; display: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    #room-code-display.visible { display: block; }
+    #room-code-display .rc-label { font-size: 8px; color: #C4A484; margin-bottom: 4px; }
+    #room-code-display .rc-code {
+      font-size: 18px; color: #FFD700; letter-spacing: 4px;
+      text-shadow: 0 0 12px rgba(255,215,0,0.4);
+    }
+    #room-code-display .rc-role { font-size: 8px; color: #87CEEB; margin-top: 6px; }
+    #mp-players {
+      font-size: 10px; color: #F5DEB3; line-height: 1.6;
+    }
+
     #mute-btn {
       position: absolute; top: 12px; right: 160px;
       z-index: 50; background: rgba(0,0,0,0.7);
@@ -429,6 +497,24 @@
     #mute-btn:hover { background: rgba(40,25,10,0.9); }
 
     .hidden { display: none !important; }
+
+    /* Flash branco na morte */
+    #death-flash {
+      position: fixed; inset: 0;
+      background: #fff;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 90;
+    }
+    #death-flash.active {
+      animation: death-flash-anim 0.55s ease-out forwards;
+    }
+    @keyframes death-flash-anim {
+      0% { opacity: 0.95; }
+      25% { opacity: 0.7; }
+      100% { opacity: 0; }
+    }
+
     .particle { position: absolute; border-radius: 50%; pointer-events: none; z-index: 22; }
     .char-shadow {
       position: absolute; bottom: 27%; width: 80px; height: 18px;
@@ -613,11 +699,17 @@
       <h4>📋 Regras</h4>
       <b style="color:#FF4500">CABEÇA</b> → Kill · <b style="color:#87CEEB">PERNAS</b> → Ajoelha<br>
       <b style="color:#FFA500">BRAÇO</b> → Dor · <b>CORPO</b> → Dano<br>
-      <b style="color:#FF6600">Queimar largada</b> = dano em você!<br>
+      <b style="color:#FF6600">Clicar antes do DRAW</b> = queimada (−1 vida)<br>
       <b style="color:#E0B0FF">ONDAS</b> = dificuldade sobe a cada vitória
     </div>
     <div id="crosshair"><div class="dot"></div></div>
     <div id="zone-label"></div>
+    <div id="death-flash"></div>
+    <div id="room-code-display">
+      <div class="rc-label">CÓDIGO DA SALA</div>
+      <div class="rc-code" id="room-code-value">-----</div>
+      <div class="rc-role" id="room-code-role">HOST</div>
+    </div>
   </div>
 
   <div id="overlay">
@@ -625,7 +717,7 @@
     <p class="subtitle">Mire nas zonas · Não queime a largada</p>
     <p class="desc">
       Mouse no <b>tambor</b> → espere <b style="color:#FF4500">DRAW!</b> → atire na zona.<br>
-      Sair do tambor ou atirar antes do sinal = <b style="color:#FF6600">queimada</b> (você leva dano).
+      <b style="color:#FF6600">Clicar</b> antes do DRAW = queimada (−1 vida). Só sair do tambor reinicia a espera.
     </p>
     <p class="desc" style="font-size:9px; color:#888; margin-bottom:6px;">
       <b style="color:#E0B0FF">ONDAS</b>: sobreviva o máximo de ondas · dificuldade sobe sempre
@@ -661,8 +753,24 @@
       </button>
     </div>
     <button id="start-btn" disabled>SELECIONE O MODO</button>
+
+    <div class="mp-section">
+      <h3>👥 MULTIPLAYER (2 jogadores)</h3>
+      <div class="mp-row" id="mp-menu-row">
+        <button class="mp-btn" id="mp-create-btn">CRIAR SALA</button>
+        <input type="text" id="mp-code-input" maxlength="5" placeholder="CÓDIGO" inputmode="numeric" pattern="[0-9]*">
+        <button class="mp-btn" id="mp-join-btn">ENTRAR</button>
+      </div>
+      <div id="mp-status"></div>
+      <div id="mp-lobby">
+        <div id="mp-players">Aguardando...</div>
+        <button id="mp-ready-btn">PRONTO</button>
+        <button id="mp-leave-btn">SAIR DA SALA</button>
+      </div>
+    </div>
   </div>
 
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script>
     // ========== ÁUDIO (Web Audio API) ==========
     let audioCtx = null;
@@ -714,6 +822,56 @@
       src.start();
     }
 
+    function playScream(startFreq, endFreq, duration, vol) {
+      if (muted) return;
+      const ctx = ensureAudio();
+      const t = ctx.currentTime;
+      // Voz principal (sawtooth filtrada)
+      const osc = ctx.createOscillator();
+      const filter = ctx.createBiquadFilter();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(startFreq, t);
+      osc.frequency.exponentialRampToValueAtTime(Math.max(40, endFreq), t + duration);
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(startFreq * 1.4, t);
+      filter.frequency.exponentialRampToValueAtTime(Math.max(80, endFreq * 1.2), t + duration);
+      filter.Q.value = 4;
+      gain.gain.setValueAtTime(0.001, t);
+      gain.gain.linearRampToValueAtTime(vol || 0.18, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + duration);
+      // Harmônico / “voz”
+      const osc2 = ctx.createOscillator();
+      const g2 = ctx.createGain();
+      osc2.type = 'triangle';
+      osc2.frequency.setValueAtTime(startFreq * 1.5, t);
+      osc2.frequency.exponentialRampToValueAtTime(Math.max(50, endFreq * 1.3), t + duration);
+      g2.gain.setValueAtTime(0.001, t);
+      g2.gain.linearRampToValueAtTime((vol || 0.18) * 0.45, t + 0.03);
+      g2.gain.exponentialRampToValueAtTime(0.001, t + duration);
+      osc2.connect(g2);
+      g2.connect(ctx.destination);
+      osc2.start(t);
+      osc2.stop(t + duration);
+      // Ruído de garganta
+      playNoise(Math.min(duration, 0.25), (vol || 0.18) * 0.5, startFreq);
+    }
+
+    function triggerDeathFlash() {
+      const flash = document.getElementById('death-flash');
+      if (!flash) return;
+      flash.classList.remove('active');
+      // force reflow to restart animation
+      void flash.offsetWidth;
+      flash.classList.add('active');
+      setTimeout(() => flash.classList.remove('active'), 600);
+    }
+
     const SFX = {
       gunshot() {
         playNoise(0.12, 0.35, 1200);
@@ -725,19 +883,32 @@
         playTone(800, 0.05, 'square', 0.1);
         playTone(200, 0.15, 'sawtooth', 0.15, 60);
         setTimeout(() => playTone(1200, 0.08, 'sine', 0.08), 50);
+        // Grito agudo curto (cabeça)
+        setTimeout(() => playScream(900, 280, 0.35, 0.22), 40);
       },
       bodyHit() {
         playNoise(0.1, 0.28, 700);
         playTone(90, 0.12, 'triangle', 0.12, 50);
+        // Grito médio / grunhido (tronco)
+        setTimeout(() => playScream(420, 160, 0.45, 0.2), 40);
       },
       legHit() {
         playNoise(0.14, 0.25, 400);
         playTone(60, 0.18, 'triangle', 0.14, 30);
         setTimeout(() => playTone(45, 0.1, 'sine', 0.08), 80);
+        // Grito grave / uivo baixo (pernas)
+        setTimeout(() => playScream(320, 90, 0.55, 0.2), 50);
       },
       armHit() {
         playNoise(0.09, 0.22, 900);
         playTone(150, 0.1, 'square', 0.08, 80);
+        // Grito curto de dor (braço)
+        setTimeout(() => playScream(550, 220, 0.28, 0.16), 35);
+      },
+      deathScream() {
+        // Grito longo caindo (morte)
+        playScream(700, 80, 0.85, 0.25);
+        setTimeout(() => playScream(400, 60, 0.5, 0.12), 200);
       },
       falseStart() {
         playTone(220, 0.15, 'sawtooth', 0.2);
@@ -931,10 +1102,14 @@
       revolverUI.classList.remove('armed');
       player.classList.remove('ready');
 
-      // QUEIMAR LARGADA: sair do tambor durante a espera
+      // Sair do tambor só reinicia a espera (NÃO é queimada — só clique antes do DRAW)
       if (state.phase === 'waiting') {
         clearTimeout(state.waitTimeout);
-        penalizeFalseStart('Saiu do tambor antes do DRAW!');
+        message.textContent = 'Mantenha o mouse no tambor!';
+        message.className = 'lose';
+        setTimeout(() => {
+          if (state.phase === 'waiting') startWaiting();
+        }, 900);
       }
     });
 
@@ -944,22 +1119,29 @@
           zoneLabel.textContent = ({ head: '🎯 CABEÇA', body: '💥 CORPO', arm: '😣 BRAÇO', legs: '🦵 PERNAS' })[zone];
           zoneLabel.classList.add('show');
         }
-        // Atirar antes do DRAW = queimada
-        if (state.phase === 'waiting') {
-          clearTimeout(state.waitTimeout);
-          penalizeFalseStart('Atirou antes do sinal!');
-        }
       });
       el.addEventListener('mouseleave', () => zoneLabel.classList.remove('show'));
+      // Passar o mouse no inimigo após DRAW atira (sem clique obrigatório)
       el.addEventListener('mouseenter', () => tryShoot(zone));
-      el.addEventListener('mousedown', () => {
+      // QUEIMADA: só se CLICAR antes do DRAW
+      el.addEventListener('mousedown', (e) => {
         if (state.phase === 'waiting') {
+          e.preventDefault();
           clearTimeout(state.waitTimeout);
-          penalizeFalseStart('Atirou antes do sinal!');
+          penalizeFalseStart('Clicou antes do DRAW!');
           return;
         }
         tryShoot(zone);
       });
+    });
+
+    // Clique global antes do DRAW também conta como queimada (qualquer lugar)
+    document.addEventListener('mousedown', (e) => {
+      if (state.phase !== 'waiting') return;
+      // ignora clique no botão de mute / overlay
+      if (e.target.closest('#mute-btn') || e.target.closest('#overlay')) return;
+      clearTimeout(state.waitTimeout);
+      penalizeFalseStart('Clicou antes do DRAW!');
     });
 
     function penalizeFalseStart(reason) {
@@ -980,6 +1162,8 @@
 
       if (state.playerHP <= 0) {
         player.classList.add('dead');
+        triggerDeathFlash();
+        setTimeout(() => SFX.deathScream(), 40);
         setTimeout(() => {
           SFX.defeat();
           endGame(false);
@@ -1181,6 +1365,8 @@
       if (killed) {
         state.phase = 'result';
         enemy.classList.add('dead');
+        triggerDeathFlash();
+        setTimeout(() => SFX.deathScream(), 50);
         message.className = 'win';
         message.innerHTML = msg;
         if (state.isWaves) {
@@ -1265,6 +1451,8 @@
 
       if (state.playerHP <= 0) {
         player.classList.add('dead');
+        triggerDeathFlash();
+        setTimeout(() => SFX.deathScream(), 50);
         message.className = 'lose';
         message.textContent = msg || '💀 Você foi abatido!';
         setTimeout(() => { SFX.defeat(); endGame(false); }, 1800);
@@ -1412,6 +1600,623 @@
     });
 
     document.addEventListener('contextmenu', e => e.preventDefault());
+
+    // ========== MULTIPLAYER (PeerJS) ==========
+    const mp = {
+      peer: null,
+      conn: null,
+      isHost: false,
+      code: null,
+      connected: false,
+      localReady: false,
+      remoteReady: false,
+      active: false, // duel in progress
+      remoteShot: null,
+      localShot: null,
+      resolving: false
+    };
+
+    const mpStatus = document.getElementById('mp-status');
+    const mpLobby = document.getElementById('mp-lobby');
+    const mpPlayers = document.getElementById('mp-players');
+    const mpReadyBtn = document.getElementById('mp-ready-btn');
+    const roomCodeDisplay = document.getElementById('room-code-display');
+    const roomCodeValue = document.getElementById('room-code-value');
+    const roomCodeRole = document.getElementById('room-code-role');
+
+    function mpSetStatus(text, color) {
+      mpStatus.textContent = text;
+      mpStatus.style.color = color || '#C4A484';
+    }
+
+    function genCode() {
+      return String(Math.floor(10000 + Math.random() * 90000)); // 5 dígitos
+    }
+
+    function peerIdFromCode(code) {
+      return 'duelo' + code;
+    }
+
+    function mpSend(data) {
+      if (mp.conn && mp.conn.open) {
+        try { mp.conn.send(data); } catch (e) { console.warn(e); }
+      }
+    }
+
+    function showRoomCode(code, role) {
+      roomCodeValue.textContent = code;
+      roomCodeRole.textContent = role === 'host' ? 'HOST · compartilhe o código' : 'CONVIDADO';
+      roomCodeDisplay.classList.add('visible');
+    }
+
+    function hideRoomCode() {
+      roomCodeDisplay.classList.remove('visible');
+    }
+
+    function updateLobbyUI() {
+      const you = mp.localReady ? '✅ Você' : '⏳ Você';
+      const other = !mp.connected ? '❌ Aguardando jogador...'
+        : (mp.remoteReady ? '✅ Oponente' : '⏳ Oponente');
+      mpPlayers.innerHTML = you + '<br>' + other;
+      mpReadyBtn.classList.toggle('ready', mp.localReady);
+      mpReadyBtn.textContent = mp.localReady ? 'AGUARDANDO...' : 'PRONTO';
+      if (mp.localReady && mp.remoteReady && mp.connected) {
+        mpSetStatus('Iniciando duelo...', '#32CD32');
+        if (mp.isHost) {
+          setTimeout(() => startMultiplayerDuel(), 800);
+        }
+      }
+    }
+
+    function setupConnection(conn) {
+      mp.conn = conn;
+      conn.on('open', () => {
+        mp.connected = true;
+        mpSetStatus('Conectado! Fiquem prontos.', '#32CD32');
+        updateLobbyUI();
+        mpSend({ type: 'hello', ready: mp.localReady });
+      });
+      conn.on('data', (data) => handleMpMessage(data));
+      conn.on('close', () => {
+        mp.connected = false;
+        mp.remoteReady = false;
+        mpSetStatus('Oponente desconectou.', '#FF6B6B');
+        updateLobbyUI();
+        if (mp.active) {
+          message.className = 'lose';
+          message.textContent = 'Oponente saiu da sala';
+          setTimeout(() => {
+            mpCleanup(false);
+            overlay.classList.remove('hidden');
+          }, 1500);
+        }
+      });
+      conn.on('error', (err) => {
+        mpSetStatus('Erro: ' + (err.message || err.type || 'conexão'), '#FF6B6B');
+      });
+    }
+
+    function handleMpMessage(data) {
+      if (!data || !data.type) return;
+      switch (data.type) {
+        case 'hello':
+          mp.remoteReady = !!data.ready;
+          updateLobbyUI();
+          break;
+        case 'ready':
+          mp.remoteReady = !!data.ready;
+          updateLobbyUI();
+          break;
+        case 'start':
+          // Guest receives start from host
+          beginMpMatch();
+          break;
+        case 'draw':
+          // Sync DRAW from host
+          if (!mp.isHost) {
+            clearTimeout(state.waitTimeout);
+            triggerDraw();
+          }
+          break;
+        case 'shoot':
+          // Opponent shot
+          onRemoteShoot(data);
+          break;
+        case 'false_start':
+          // Opponent false started — they take damage on their side
+          message.className = 'hit-info';
+          message.textContent = 'Oponente queimou a largada!';
+          break;
+        case 'wait_restart':
+          if (!mp.isHost) {
+            setTimeout(() => startWaitingMp(), 400);
+          }
+          break;
+      }
+    }
+
+    function createRoom() {
+      if (typeof Peer === 'undefined') {
+        mpSetStatus('Biblioteca PeerJS não carregou. Verifique a internet.', '#FF6B6B');
+        return;
+      }
+      ensureAudio();
+      const code = genCode();
+      mp.isHost = true;
+      mp.code = code;
+      mp.localReady = false;
+      mp.remoteReady = false;
+      mpSetStatus('Criando sala...', '#FFD700');
+
+      try {
+        if (mp.peer) { try { mp.peer.destroy(); } catch (_) {} }
+        mp.peer = new Peer(peerIdFromCode(code), { debug: 0 });
+      } catch (e) {
+        mpSetStatus('Erro ao criar peer: ' + e.message, '#FF6B6B');
+        return;
+      }
+
+      mp.peer.on('open', (id) => {
+        showRoomCode(code, 'host');
+        mpLobby.classList.add('visible');
+        document.getElementById('mp-menu-row').style.display = 'none';
+        mpSetStatus('Sala criada! Código: ' + code, '#32CD32');
+        updateLobbyUI();
+      });
+
+      mp.peer.on('connection', (conn) => {
+        if (mp.connected) {
+          conn.close();
+          return; // max 2 players
+        }
+        setupConnection(conn);
+      });
+
+      mp.peer.on('error', (err) => {
+        let msg = err.type || err.message || 'erro';
+        if (err.type === 'unavailable-id') {
+          // código ocupado — tentar outro
+          mpSetStatus('Código ocupado, gerando outro...', '#FFA500');
+          setTimeout(createRoom, 400);
+          return;
+        }
+        mpSetStatus('Erro Peer: ' + msg, '#FF6B6B');
+      });
+    }
+
+    function joinRoom() {
+      if (typeof Peer === 'undefined') {
+        mpSetStatus('Biblioteca PeerJS não carregou. Verifique a internet.', '#FF6B6B');
+        return;
+      }
+      ensureAudio();
+      const code = (document.getElementById('mp-code-input').value || '').replace(/\D/g, '').slice(0, 5);
+      if (code.length < 1 || code.length > 5) {
+        mpSetStatus('Digite um código de 1 a 5 dígitos.', '#FF6B6B');
+        return;
+      }
+      mp.isHost = false;
+      mp.code = code;
+      mp.localReady = false;
+      mp.remoteReady = false;
+      mpSetStatus('Conectando à sala ' + code + '...', '#FFD700');
+
+      try {
+        if (mp.peer) { try { mp.peer.destroy(); } catch (_) {} }
+        mp.peer = new Peer(undefined, { debug: 0 });
+      } catch (e) {
+        mpSetStatus('Erro: ' + e.message, '#FF6B6B');
+        return;
+      }
+
+      mp.peer.on('open', () => {
+        showRoomCode(code, 'guest');
+        mpLobby.classList.add('visible');
+        document.getElementById('mp-menu-row').style.display = 'none';
+        const conn = mp.peer.connect(peerIdFromCode(code), { reliable: true });
+        setupConnection(conn);
+        // timeout se sala não existir
+        setTimeout(() => {
+          if (!mp.connected) {
+            mpSetStatus('Sala não encontrada ou host offline.', '#FF6B6B');
+          }
+        }, 8000);
+      });
+
+      mp.peer.on('error', (err) => {
+        mpSetStatus('Erro: ' + (err.type || err.message), '#FF6B6B');
+      });
+    }
+
+    function mpCleanup(keepOverlay) {
+      mp.active = false;
+      mp.connected = false;
+      mp.localReady = false;
+      mp.remoteReady = false;
+      mp.resolving = false;
+      mp.localShot = null;
+      mp.remoteShot = null;
+      if (mp.conn) { try { mp.conn.close(); } catch (_) {} mp.conn = null; }
+      if (mp.peer) { try { mp.peer.destroy(); } catch (_) {} mp.peer = null; }
+      hideRoomCode();
+      mpLobby.classList.remove('visible');
+      document.getElementById('mp-menu-row').style.display = 'flex';
+      mpSetStatus('');
+      state.difficulty = null;
+      if (!keepOverlay) {
+        // stay on overlay
+      }
+    }
+
+    document.getElementById('mp-create-btn').addEventListener('click', createRoom);
+    document.getElementById('mp-join-btn').addEventListener('click', joinRoom);
+    document.getElementById('mp-code-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') joinRoom();
+    });
+    document.getElementById('mp-code-input').addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 5);
+    });
+
+    mpReadyBtn.addEventListener('click', () => {
+      if (!mp.connected && !mp.isHost) {
+        mpSetStatus('Aguarde a conexão...', '#FFA500');
+        return;
+      }
+      // Host can mark ready before guest joins; guest needs connection
+      mp.localReady = !mp.localReady;
+      mpSend({ type: 'ready', ready: mp.localReady });
+      updateLobbyUI();
+    });
+
+    document.getElementById('mp-leave-btn').addEventListener('click', () => {
+      mpCleanup(false);
+      mpSetStatus('Você saiu da sala.', '#C4A484');
+    });
+
+    function startMultiplayerDuel() {
+      if (!mp.isHost || !mp.localReady || !mp.remoteReady) return;
+      mpSend({ type: 'start' });
+      beginMpMatch();
+    }
+
+    function beginMpMatch() {
+      mp.active = true;
+      mp.resolving = false;
+      mp.localShot = null;
+      mp.remoteShot = null;
+      ensureAudio();
+      overlay.classList.add('hidden');
+      state.difficulty = 'medium';
+      state.round = 1;
+      state.wave = 1;
+      state.hits = 0;
+      state.headshots = 0;
+      state.falseStarts = 0;
+      state.bestTime = null;
+      state.lastTime = null;
+      state.isWaves = false;
+      state.noTimeout = false;
+      state.playerMaxHP = 3;
+      state.playerHP = 3;
+      state.maxHP = 3;
+      state.killShots = 3;
+      state.enemyHP = 3;
+      state.enemyShotsTaken = 0;
+      state.canShoot = false;
+      state.enemyKneeling = false;
+      state.playerKneeling = false;
+      state.enemyArmHurt = false;
+      state.currentMaxReaction = 950;
+
+      diffBadge.textContent = '1v1';
+      diffBadge.className = 'livre';
+      diffBadge.classList.remove('hidden');
+      waveBanner.style.display = 'none';
+      showRoomCode(mp.code, mp.isHost ? 'host' : 'guest');
+
+      // Labels: você / oponente
+      document.querySelector('#player-hp-bar .hp-label').textContent = 'VOCÊ';
+      document.querySelector('#enemy-hp-bar .hp-label').textContent = 'OPONENTE';
+
+      player.className = '';
+      enemy.className = '';
+      armHurtVis.style.opacity = '0';
+      document.body.classList.remove('enemy-kneeling', 'player-kneeling');
+      document.querySelectorAll('.knee-pad').forEach(k => k.classList.remove('visible'));
+      updateHPBars();
+      updateHUD();
+      startWaitingMp();
+      checkTimeout();
+    }
+
+    function startWaitingMp() {
+      if (!mp.active) return;
+      if (state.playerHP <= 0 || state.enemyHP <= 0) return;
+      state.phase = 'waiting';
+      state.canShoot = false;
+      mp.resolving = false;
+      mp.localShot = null;
+      mp.remoteShot = null;
+      message.className = 'info';
+      message.textContent = '1v1 · Mantenha no tambor...';
+      applyPlayerVisuals();
+      applyEnemyVisuals();
+      cylinder.classList.toggle('ready', state.mouseOnCylinder);
+      revolverUI.classList.toggle('armed', state.mouseOnCylinder);
+      crosshair.classList.toggle('armed', state.mouseOnCylinder);
+      showZoneHints(false);
+
+      if (mp.isHost) {
+        const delay = 1500 + Math.random() * 3000;
+        state.waitTimeout = setTimeout(() => {
+          if (state.phase === 'waiting' && state.mouseOnCylinder) {
+            mpSend({ type: 'draw' });
+            triggerDraw();
+          } else if (state.phase === 'waiting') {
+            message.textContent = 'Coloque o mouse no tambor!';
+            message.className = 'lose';
+            setTimeout(() => {
+              if (state.phase === 'waiting') startWaitingMp();
+            }, 1000);
+          }
+        }, delay);
+      }
+      // Guest waits for draw message from host
+    }
+
+    // Override parts of shooting for MP
+    const _origTryShoot = tryShoot;
+    tryShoot = function(zone) {
+      if (mp.active) {
+        if (state.phase !== 'draw' || !state.canShoot || state.enemyHP <= 0) return;
+        state.canShoot = false;
+        const reactionTime = performance.now() - state.reactionStart;
+        mp.localShot = { zone, reactionTime, t: Date.now() };
+        SFX.gunshot();
+        muzzleFlash.classList.add('active');
+        revolverUI.classList.add('shooting');
+        player.classList.add('shooting');
+        setTimeout(() => {
+          muzzleFlash.classList.remove('active');
+          revolverUI.classList.remove('shooting');
+          player.classList.remove('shooting');
+        }, 250);
+        mpSend({ type: 'shoot', zone, reactionTime, t: mp.localShot.t });
+        resolveMpShots();
+        return;
+      }
+      _origTryShoot(zone);
+    };
+
+    function onRemoteShoot(data) {
+      if (!mp.active || state.phase !== 'draw' && state.phase !== 'result') {
+        // still accept if just resolved
+      }
+      mp.remoteShot = {
+        zone: data.zone,
+        reactionTime: data.reactionTime,
+        t: data.t || Date.now()
+      };
+      SFX.enemyShot();
+      enemy.classList.add('shooting');
+      setTimeout(() => enemy.classList.remove('shooting'), 280);
+      resolveMpShots();
+    }
+
+    function resolveMpShots() {
+      if (!mp.active || mp.resolving) return;
+      // Wait a brief window so both shots can arrive if near-simultaneous
+      if (!mp.localShot && !mp.remoteShot) return;
+
+      const both = mp.localShot && mp.remoteShot;
+      const onlyLocal = mp.localShot && !mp.remoteShot;
+      const onlyRemote = !mp.localShot && mp.remoteShot;
+
+      // If only one side shot, wait a bit for the other
+      if (onlyLocal || onlyRemote) {
+        if (!resolveMpShots._waiting) {
+          resolveMpShots._waiting = true;
+          setTimeout(() => {
+            resolveMpShots._waiting = false;
+            resolveMpShotsFinal();
+          }, 350);
+        }
+        return;
+      }
+      if (both) resolveMpShotsFinal();
+    }
+
+    function resolveMpShotsFinal() {
+      if (!mp.active || mp.resolving) return;
+      mp.resolving = true;
+      state.phase = 'result';
+      state.canShoot = false;
+      showZoneHints(false);
+
+      const local = mp.localShot;
+      const remote = mp.remoteShot;
+
+      // Quem atirou mais rápido (menor reactionTime) vence o round
+      let localWins = false;
+      let remoteWins = false;
+      if (local && remote) {
+        if (local.reactionTime < remote.reactionTime - 5) localWins = true;
+        else if (remote.reactionTime < local.reactionTime - 5) remoteWins = true;
+        else {
+          // empate quase — ambos acertam
+          localWins = true;
+          remoteWins = true;
+        }
+      } else if (local && !remote) {
+        localWins = true;
+      } else if (remote && !local) {
+        remoteWins = true;
+      }
+
+      function applyHitToEnemy(zone) {
+        state.hits++;
+        state.enemyShotsTaken++;
+        state.lastTime = local ? local.reactionTime : null;
+        if (local && (state.bestTime === null || local.reactionTime < state.bestTime)) {
+          state.bestTime = local.reactionTime;
+        }
+        enemy.classList.add('hit-flash');
+        setTimeout(() => enemy.classList.remove('hit-flash'), 250);
+        if (zone === 'head') {
+          state.enemyHP = 0;
+          state.headshots++;
+          SFX.headshot();
+        } else {
+          state.enemyHP = Math.max(0, state.enemyHP - 1);
+          if (zone === 'legs') { state.enemyKneeling = true; SFX.legHit(); }
+          else if (zone === 'arm') { state.enemyArmHurt = true; SFX.armHit(); }
+          else SFX.bodyHit();
+          if (state.enemyShotsTaken >= state.killShots || state.enemyHP <= 0) state.enemyHP = 0;
+        }
+        applyEnemyVisuals();
+      }
+
+      function applyHitToPlayer(zone) {
+        player.classList.add('hurt');
+        setTimeout(() => player.classList.remove('hurt'), 300);
+        if (zone === 'head') {
+          state.playerHP = 0;
+          SFX.headshot();
+        } else {
+          state.playerHP = Math.max(0, state.playerHP - 1);
+          if (zone === 'legs') { state.playerKneeling = true; SFX.legHit(); }
+          else if (zone === 'arm') SFX.armHit();
+          else SFX.bodyHit();
+        }
+        applyPlayerVisuals();
+      }
+
+      if (localWins && local) applyHitToEnemy(local.zone);
+      if (remoteWins && remote) applyHitToPlayer(remote.zone);
+
+      updateHPBars();
+      updateHUD();
+
+      if (state.enemyHP <= 0 && state.playerHP <= 0) {
+        triggerDeathFlash();
+        SFX.deathScream();
+        message.className = 'hit-info';
+        message.textContent = '💥 Empate mortal!';
+        setTimeout(() => { SFX.defeat(); endMpGame(null); }, 2000);
+      } else if (state.enemyHP <= 0) {
+        enemy.classList.add('dead');
+        triggerDeathFlash();
+        SFX.deathScream();
+        message.className = 'win';
+        message.textContent = '🏆 Você venceu o duelo!';
+        setTimeout(() => { SFX.victory(); endMpGame(true); }, 2000);
+      } else if (state.playerHP <= 0) {
+        player.classList.add('dead');
+        triggerDeathFlash();
+        SFX.deathScream();
+        message.className = 'lose';
+        message.textContent = '💀 Você perdeu o duelo!';
+        setTimeout(() => { SFX.defeat(); endMpGame(false); }, 2000);
+      } else {
+        let msg = '';
+        if (localWins && remoteWins) msg = '⚡ Troca de tiros!';
+        else if (localWins) msg = '💥 Você acertou!';
+        else if (remoteWins) msg = '💢 Oponente acertou!';
+        else msg = '…';
+        message.className = 'hit-info';
+        message.textContent = msg + ' Vida ' + state.playerHP + ' x ' + state.enemyHP;
+        setTimeout(() => {
+          state.round++;
+          updateHUD();
+          if (mp.isHost) {
+            mpSend({ type: 'wait_restart' });
+            startWaitingMp();
+          }
+        }, 1600);
+      }
+    }
+
+    function endMpGame(playerWon) {
+      mp.active = false;
+      state.phase = 'idle';
+      showZoneHints(false);
+      setTimeout(() => {
+        overlay.classList.remove('hidden');
+        mp.localReady = false;
+        mp.remoteReady = false;
+        updateLobbyUI();
+        mpSetStatus(playerWon === true ? 'Vitória! Pronto para revanche?' :
+          playerWon === false ? 'Derrota. Tente de novo!' : 'Empate!');
+        // Keep peer connection for rematch
+        if (mp.connected) {
+          mpLobby.classList.add('visible');
+        } else {
+          mpCleanup(false);
+        }
+      }, 1200);
+    }
+
+    // False start in MP: notify peer
+    const _origPenalize = penalizeFalseStart;
+    penalizeFalseStart = function(reason) {
+      if (mp.active) {
+        mpSend({ type: 'false_start' });
+      }
+      _origPenalize(reason);
+      // After false start in MP, host restarts wait for both
+      if (mp.active && state.playerHP > 0) {
+        // original already schedules startWaiting — patch to MP version
+        // the original uses startWaiting; override after
+        setTimeout(() => {
+          if (mp.active && state.phase === 'waiting' || state.phase === 'result') {
+            // original scheduled startWaiting — we need startWaitingMp
+          }
+        }, 50);
+      }
+    };
+
+    // When false start ends and would call startWaiting, use MP version if active
+    const _origStartWaiting = startWaiting;
+    startWaiting = function() {
+      if (mp.active) {
+        startWaitingMp();
+        return;
+      }
+      _origStartWaiting();
+    };
+
+    // Timeout in MP: only host decides; if neither shot, both "lose" the window - opponent doesn't auto-shoot like AI
+    // checkTimeout already calls enemyShoot for SP — skip when mp.active
+    const _checkTimeout = checkTimeout;
+    // Replace animation loop behavior via patching enemyShoot
+    const _origEnemyShoot = enemyShoot;
+    enemyShoot = function() {
+      if (mp.active) {
+        // Tempo esgotou sem tiro local — se remoto também não atirou, só reinicia
+        state.canShoot = false;
+        showZoneHints(false);
+        if (!mp.localShot && !mp.remoteShot) {
+          state.phase = 'result';
+          message.className = 'lose';
+          message.textContent = 'Tempo esgotado!';
+          setTimeout(() => {
+            state.round++;
+            updateHUD();
+            if (mp.isHost) {
+              mpSend({ type: 'wait_restart' });
+              startWaitingMp();
+            }
+          }, 1200);
+        } else {
+          resolveMpShotsFinal();
+        }
+        return;
+      }
+      _origEnemyShoot();
+    };
+
+    // Don't treat overlay/mp clicks as false start
+    // (already skips #overlay)
   </script>
 </body>
 </html>
